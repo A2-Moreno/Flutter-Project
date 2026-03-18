@@ -69,7 +69,7 @@ class LoginPage extends StatelessWidget {
                             const Text(
                               "Usuario",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF4C3F6D),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -79,7 +79,7 @@ class LoginPage extends StatelessWidget {
                             TextFormField(
                               controller: controller.userController,
                               decoration: InputDecoration(
-                                hintText: 'correo institucional',
+                                hintText: 'Correo Institucional',
                                 filled: true,
                                 fillColor: const Color(0xFFFFFFFF),
                                 border: OutlineInputBorder(
@@ -102,7 +102,7 @@ class LoginPage extends StatelessWidget {
                             const Text(
                               "Contraseña",
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF4C3F6D),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -113,7 +113,7 @@ class LoginPage extends StatelessWidget {
                               controller: controller.passwordController,
                               obscureText: true,
                               decoration: InputDecoration(
-                                hintText: 'contraseña',
+                                hintText: 'Contraseña',
                                 filled: true,
                                 fillColor: const Color(0xFFFFFFFF),
                                 border: OutlineInputBorder(

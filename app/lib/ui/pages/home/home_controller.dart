@@ -9,6 +9,6 @@ class HomeController extends GetxController {
   ].obs;
 
   void abrirCrearCurso() {
-    Get.dialog(const CrearCursoDialog());
+    Get.to(() => const CreateCourseScreen());
   }
 }

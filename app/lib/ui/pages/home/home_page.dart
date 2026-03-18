@@ -24,31 +24,30 @@ class HomeScreen extends StatelessWidget {
           children: [
             // Encabezado superior morado
             Container(
-              width: double.infinity,
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              decoration: const BoxDecoration(color: Color(0xFF4C3F6D)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Botón atrás
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(height: 40),
-                      Text(
-                        "Hola, ${user.name}",
-                        style: const TextStyle(
-                          color: Color(0xFFFFFFFF),
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const SizedBox(height: 48),
+                      Image.asset(
+                        "assets/logo_sin_fondo.png",
+                        height: MediaQuery.of(context).size.height * 0.075,
                       ),
                     ],
                   ),
-                  // Logo en la parte superior derecha
-                  Image.asset(
-                    "assets/logo_sin_fondo.png",
-                    height: MediaQuery.of(context).size.height * 0.1,
+
+                  // Icono derecha
+                  Text(
+                    "Crear curso",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
