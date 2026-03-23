@@ -32,11 +32,13 @@ class _LoginPageState extends State<LoginPage> {
     final password = passwordController.text.trim();
 
     try {
-      await controller.login(email, password);
+      final result = await controller.login(email, password);
+      if (result) {
+        Get.to(() => HomeScreen());
+      }
     } catch (e) {
       Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
     }
-    Get.to(() => HomeScreen());
   }
 
   @override
@@ -169,7 +171,10 @@ class _LoginPageState extends State<LoginPage> {
                                 const Text("¿No tienes una cuenta?"),
                                 TextButton(
                                   onPressed: () {
-                                    Get.to(() => const RegisterPage(title: "Registro"));
+                                    Get.to(
+                                      () =>
+                                          const RegisterPage(title: "Registro"),
+                                    );
                                   },
                                   child: const Text(
                                     "Regístrate",
