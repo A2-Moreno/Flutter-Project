@@ -1,7 +1,7 @@
 import 'package:app/features/home/ui/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:app/features/auth/ui/pages/register_page.dart';
 import '../viewmodels/authentication_controller.dart';
 import '../../../../core/widgets/top_curve_clipper.dart';
 
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                   right: 0,
                   child: Center(
                     child: Image.asset(
-                      "assets/logo_con_circulo.png",
+                      "assets/logo_sin_fondo.png",
                       height: MediaQuery.of(context).size.height * 0.15,
                     ),
                   ),
@@ -161,6 +161,25 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("¿No tienes una cuenta?"),
+                                TextButton(
+                                  onPressed: () {
+                                    Get.to(() => const RegisterPage(title: "Registro"));
+                                  },
+                                  child: const Text(
+                                    "Regístrate",
+                                    style: TextStyle(
+                                      color: Color(0xFF4c3f6d),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
