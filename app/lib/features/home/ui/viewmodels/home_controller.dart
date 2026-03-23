@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../../teacher/ui/pages/create_course.dart';
+import '../../../course/ui/pages/course_page.dart';
 
 class HomeController extends GetxController {
   var courses = [
@@ -10,5 +11,9 @@ class HomeController extends GetxController {
 
   void abrirCrearCurso() {
     Get.to(() => const CreateCourseScreen());
+  }
+
+  void abrirCurso() {
+    Get.to(() => CourseScreen());
   }
 }

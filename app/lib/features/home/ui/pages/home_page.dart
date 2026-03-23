@@ -27,7 +27,6 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Botón atrás
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -125,6 +124,15 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: controller.abrirCurso,
+                                    padding: const EdgeInsets.all(0),
+                                    constraints: const BoxConstraints(),
+                                    icon: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Color(0xFF4C3F6D),
                                     ),
                                   ),
                                 ],
