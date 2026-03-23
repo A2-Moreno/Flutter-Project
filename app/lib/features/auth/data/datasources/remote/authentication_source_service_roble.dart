@@ -11,13 +11,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthenticationSourceServiceRoble implements IAuthenticationSource {
   final http.Client httpClient;
-  final contract =
-      dotenv.get('EXPO_PUBLIC_ROBLE_PROJECT_ID', fallback: "NO_ENV");
+  final contract = dotenv.get(
+    'EXPO_PUBLIC_ROBLE_PROJECT_ID',
+    fallback: "NO_ENV",
+  );
   late final String baseUrl =
       'https://roble-api.openlab.uninorte.edu.co/auth/$contract';
 
   AuthenticationSourceServiceRoble({http.Client? client})
-      : httpClient = client ?? http.Client();
+    : httpClient = client ?? http.Client();
 
   @override
   Future<void> login(String email, String password) async {
@@ -26,10 +28,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
-      }),
+      body: jsonEncode(<String, String>{"email": email, "password": password}),
     );
 
     logInfo(response.statusCode);
@@ -42,21 +41,28 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       await sharedPreferences.setString('token', token);
       await sharedPreferences.setString('refreshToken', refreshToken);
       await sharedPreferences.setString('userId', data['user']['id']);
-      logInfo("Token: $token"
-          "\nRefresh Token: $refreshToken");
+      logInfo(
+        "Token: $token"
+        "\nRefresh Token: $refreshToken",
+      );
       return Future.value();
     } else {
       final Map<String, dynamic> body = json.decode(response.body);
       final String errorMessage = body['message'];
       logError(
-          "Login endpoint got error code ${response.statusCode}: $errorMessage");
+        "Login endpoint got error code ${response.statusCode}: $errorMessage",
+      );
       return Future.error('Error $errorMessage');
     }
   }
 
   @override
   Future<void> signUp(
-      String email, String password, String name, bool direct) async {
+    String email,
+    String password,
+    String name,
+    bool direct,
+  ) async {
     late final String endpoint;
     if (direct) {
       logInfo("Signing up directly");
@@ -79,15 +85,16 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
     logInfo(response.statusCode);
     if (response.statusCode == 201) {
-      await login(email, password);
-      await addUser(email, name);
+      //await login(email, password);
+      //await addUser(email, name);
       return Future.value();
     } else {
       logError(response.body);
       final Map<String, dynamic> body = json.decode(response.body);
       final String errorMessage = body['message'];
       logError(
-          "signUp endpoint got error code ${response.statusCode} - $errorMessage");
+        "signUp endpoint got error code ${response.statusCode} - $errorMessage",
+      );
       return Future.error('Error $errorMessage');
     }
   }
@@ -103,9 +110,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
     final response = await httpClient.post(
       Uri.parse("$baseUrl/logout"),
-      headers: <String, String>{
-        'Authorization': 'Bearer $token',
-      },
+      headers: <String, String>{'Authorization': 'Bearer $token'},
     );
 
     logInfo(response.statusCode);
@@ -120,7 +125,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final Map<String, dynamic> errorBody = json.decode(response.body);
       final String errorMessage = errorBody['message'];
       logError(
-          "logout endpoint got error code ${response.statusCode} $errorMessage for token: $token");
+        "logout endpoint got error code ${response.statusCode} $errorMessage for token: $token",
+      );
       return Future.error('Error code $errorMessage');
     }
   }
@@ -145,7 +151,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final Map<String, dynamic> errorBody = json.decode(response.body);
       final String errorMessage = errorBody['message'];
       logError(
-          "verifyEmail endpoint got error code ${response.statusCode} $errorMessage for email: $email");
+        "verifyEmail endpoint got error code ${response.statusCode} $errorMessage for email: $email",
+      );
       return Future.error('Error code ${response.statusCode}');
     }
   }
@@ -161,12 +168,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
     final response = await http.post(
       Uri.parse("$baseUrl/refresh-token"),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'refreshToken': refreshToken,
-      }),
+      headers: <String, String>{'Content-Type': 'application/json'},
+      body: jsonEncode(<String, String>{'refreshToken': refreshToken}),
     );
 
     logInfo(response.statusCode);
@@ -180,7 +183,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final Map<String, dynamic> errorBody = json.decode(response.body);
       final String errorMessage = errorBody['message'];
       logError(
-          "refreshToken endpoint got error code ${response.statusCode} $errorMessage for refreshToken: $refreshToken");
+        "refreshToken endpoint got error code ${response.statusCode} $errorMessage for refreshToken: $refreshToken",
+      );
       return Future.error('Error code ${response.statusCode}');
     }
   }
@@ -192,9 +196,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        "email": email,
-      }),
+      body: jsonEncode(<String, String>{"email": email}),
     );
 
     logInfo(response.statusCode);
@@ -204,14 +206,18 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final Map<String, dynamic> errorBody = json.decode(response.body);
       final String errorMessage = errorBody['message'];
       logError(
-          "forgotPassword endpoint got error code ${response.statusCode} $errorMessage for email: $email");
+        "forgotPassword endpoint got error code ${response.statusCode} $errorMessage for email: $email",
+      );
       return Future.error('Error code ${response.statusCode}');
     }
   }
 
   @override
   Future<bool> resetPassword(
-      String email, String newPassword, String validationCode) async {
+    String email,
+    String newPassword,
+    String validationCode,
+  ) async {
     return Future.value(true);
   }
 
@@ -226,9 +232,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
     //logInfo("Verifying token: $token");
     final response = await httpClient.get(
       Uri.parse("$baseUrl/verify-token"),
-      headers: <String, String>{
-        'Authorization': 'Bearer $token',
-      },
+      headers: <String, String>{'Authorization': 'Bearer $token'},
     );
     logInfo(response.statusCode);
     if (response.statusCode == 200) {
@@ -238,7 +242,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final Map<String, dynamic> errorBody = json.decode(response.body);
       final String errorMessage = errorBody['message'];
       logError(
-          "verifyToken endpoint got error code ${response.statusCode} $errorMessage for token: $token");
+        "verifyToken endpoint got error code ${response.statusCode} $errorMessage for token: $token",
+      );
       return Future.value(false);
     }
   }
@@ -246,10 +251,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
   Future<bool> addUser(String email, String name) async {
     logInfo("Web service, Adding user");
     final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
-    final uri = Uri.https(
-      baseUrl,
-      '/database/$contract/insert',
-    );
+    final uri = Uri.https(baseUrl, '/database/$contract/insert');
     final ILocalPreferences sharedPreferences = Get.find();
     final token = await sharedPreferences.getString('token');
     final headers = {
@@ -264,7 +266,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
           "userId": await sharedPreferences.getString('userId'),
           "email": email,
           "name": name,
-        }
+        },
       ],
     });
 
@@ -286,15 +288,16 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
     final ILocalPreferences sharedPreferences = Get.find();
     final userId = await sharedPreferences.getString('userId');
 
-    var uri = Uri.https(
-      baseUrl,
-      '/database/$contract/read',
-      {'tableName': 'Users', 'userId': userId},
-    );
+    var uri = Uri.https(baseUrl, '/database/$contract/read', {
+      'tableName': 'Users',
+      'userId': userId,
+    });
 
     final token = await sharedPreferences.getString('token');
-    var response =
-        await httpClient.get(uri, headers: {'Authorization': 'Bearer $token'});
+    var response = await httpClient.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> decodedJson = jsonDecode(response.body);
@@ -302,7 +305,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       //logInfo(decodedJson);
 
       List<AuthenticationUser> users = List<AuthenticationUser>.from(
-          decodedJson.map((x) => AuthenticationUser.fromJson(x)));
+        decodedJson.map((x) => AuthenticationUser.fromJson(x)),
+      );
 
       return Future.value(users.first);
     } else {
@@ -316,15 +320,15 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
     final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
     final ILocalPreferences sharedPreferences = Get.find();
 
-    var uri = Uri.https(
-      baseUrl,
-      '/database/$contract/read',
-      {'tableName': 'Users'},
-    );
+    var uri = Uri.https(baseUrl, '/database/$contract/read', {
+      'tableName': 'Users',
+    });
 
     final token = await sharedPreferences.getString('token');
-    var response =
-        await httpClient.get(uri, headers: {'Authorization': 'Bearer $token'});
+    var response = await httpClient.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> decodedJson = jsonDecode(response.body);
@@ -332,7 +336,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       //logInfo(decodedJson);
 
       List<AuthenticationUser> users = List<AuthenticationUser>.from(
-          decodedJson.map((x) => AuthenticationUser.fromJson(x)));
+        decodedJson.map((x) => AuthenticationUser.fromJson(x)),
+      );
 
       return Future.value(users);
     } else {

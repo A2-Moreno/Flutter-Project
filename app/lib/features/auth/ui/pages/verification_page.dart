@@ -1,3 +1,4 @@
+import 'package:app/features/home/ui/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,14 +6,9 @@ import '../viewmodels/authentication_controller.dart';
 import '../../../../core/widgets/top_curve_clipper.dart';
 
 class VerificationPage extends StatefulWidget {
-  const VerificationPage({
-    super.key,
-    required this.title,
-    this.email = '',
-  });
+  const VerificationPage({super.key, required this.title});
 
   final String title;
-  final String email;
 
   @override
   State<VerificationPage> createState() => _VerificationPageState();
@@ -20,8 +16,16 @@ class VerificationPage extends StatefulWidget {
 
 class _VerificationPageState extends State<VerificationPage> {
   final AuthenticationController controller = Get.find();
-
   final TextEditingController codeController = TextEditingController();
+
+  late String email;
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments as Map<String, dynamic>?;
+    email = args?['email'] ?? '';
+  }
 
   @override
   void dispose() {
@@ -39,6 +43,17 @@ class _VerificationPageState extends State<VerificationPage> {
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
+    }
+
+    try {
+      final success = await controller.validate(email, code);
+      if (success) {
+        Get.to(() => HomeScreen());
+      } else {
+        Get.snackbar("Error", "Código inválido");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Ocurrió un problema: $e");
     }
   }
 
@@ -94,8 +109,8 @@ class _VerificationPageState extends State<VerificationPage> {
                         const SizedBox(height: 25),
 
                         Text(
-                          widget.email.isNotEmpty
-                              ? "Te enviamos un código de verificación a ${widget.email}"
+                          email.isNotEmpty
+                              ? "Te enviamos un código de verificación a $email"
                               : "Te enviamos un código de verificación a tu correo",
                           textAlign: TextAlign.center,
                           style: const TextStyle(

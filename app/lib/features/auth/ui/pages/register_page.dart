@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _register() async {
     final name = nameController.text.trim();
-    final email = emailController.text.trim();
+    final email = emailController.text.trim().toLowerCase();
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
@@ -45,6 +45,29 @@ class _RegisterPageState extends State<RegisterPage> {
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
+    }
+
+    try {
+      final success = await controller.signUp(name, email, password, false);
+
+      if (success) {
+        Get.to(
+          () => const VerificationPage(title: "Verificación"),
+          arguments: {'email': email},
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          "No se pudo registrar el usuario",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Ocurrió un problema: $e",
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -214,11 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () {
-                              Get.to(
-                                () => const VerificationPage(
-                                  title: "Verificación",
-                                ),
-                              );
+                              _register();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF4c3f6d),
