@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../teacher/create_course.dart';
+import '../../../teacher/ui/pages/create_course.dart';
 
 class HomeController extends GetxController {
   var courses = [

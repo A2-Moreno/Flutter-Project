@@ -36,6 +36,13 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.3
   google_fonts: ^8.0.2
+  loggy: ^2.0.3
+  http: ^1.6.0
+  shared_preferences: ^2.5.4
+  flex_color_scheme: ^8.4.0
+  flutter_secure_storage: ^10.0.0
+  flutter_dotenv: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +67,7 @@ flutter:
 
   assets:
     - assets/
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:

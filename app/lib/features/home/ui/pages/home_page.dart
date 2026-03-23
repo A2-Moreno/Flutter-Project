@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/app_user.dart';
 import 'package:get/get.dart';
-import 'home_controller.dart';
+import '../viewmodels/home_controller.dart';
 
 // Pantalla principal
 class HomeScreen extends StatelessWidget {
-  final AppUser user;
+  final user = "Usuario";
   // Constructor
-  HomeScreen({super.key, required this.user});
+  HomeScreen({super.key});
 
   final HomeController controller = Get.put(HomeController());
 
-  bool get isTeacher => user.role == UserRole.teacher;
+  bool get isTeacher => true;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,7 @@ class HomeScreen extends StatelessWidget {
 
                   // Icono derecha
                   Text(
-                    "Crear curso",
+                    "Hola, $user",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,

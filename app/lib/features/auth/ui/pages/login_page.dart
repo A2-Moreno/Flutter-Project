@@ -1,15 +1,43 @@
+import 'package:app/features/home/ui/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'login_controller.dart';
-import '../../widgets/top_curve_clipper.dart';
+import '../viewmodels/authentication_controller.dart';
+import '../../../../core/widgets/top_curve_clipper.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key, required this.title});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key, required this.title});
 
   final String title;
 
-  final LoginController controller = Get.put(LoginController());
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final AuthenticationController controller = Get.find();
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    try {
+      await controller.login(email, password);
+    } catch (e) {
+      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
+    }
+    Get.to(() => HomeScreen());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +56,6 @@ class LoginPage extends StatelessWidget {
                     color: const Color(0xFF4c3f6d),
                   ),
                 ),
-                //Logo encima de la curva decorativa
                 Positioned(
                   top: 40,
                   left: 0,
@@ -62,7 +89,7 @@ class LoginPage extends StatelessWidget {
 
                         const SizedBox(height: 50),
 
-                        // Usuario
+                        // Email
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -73,20 +100,15 @@ class LoginPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-
                             const SizedBox(height: 10),
-
                             TextFormField(
-                              controller: controller.userController,
+                              controller: emailController,
                               decoration: InputDecoration(
                                 hintText: 'Correo Institucional',
                                 filled: true,
                                 fillColor: const Color(0xFFFFFFFF),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF4c3f6d),
-                                  ),
                                 ),
                               ),
                             ),
@@ -95,7 +117,7 @@ class LoginPage extends StatelessWidget {
 
                         const SizedBox(height: 30),
 
-                        // Contraseña
+                        // Password
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -106,11 +128,9 @@ class LoginPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-
                             const SizedBox(height: 10),
-
                             TextFormField(
-                              controller: controller.passwordController,
+                              controller: passwordController,
                               obscureText: true,
                               decoration: InputDecoration(
                                 hintText: 'Contraseña',
@@ -118,9 +138,6 @@ class LoginPage extends StatelessWidget {
                                 fillColor: const Color(0xFFFFFFFF),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF4c3f6d),
-                                  ),
                                 ),
                               ),
                             ),
@@ -129,7 +146,7 @@ class LoginPage extends StatelessWidget {
 
                             Center(
                               child: ElevatedButton(
-                                onPressed: controller.login,
+                                onPressed: _login,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF4c3f6d),
                                   shape: RoundedRectangleBorder(

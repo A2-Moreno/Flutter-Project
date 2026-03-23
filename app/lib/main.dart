@@ -1,9 +1,46 @@
+import 'package:app/core/local_preferences_secured.dart';
+import 'package:app/core/local_preferences_shared.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'ui/pages/login/login_page.dart';
-import 'ui/themes/app_theme.dart';
+import 'package:http/http.dart' as http;
+import 'package:loggy/loggy.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'core/i_local_preferences.dart';
+import 'core/refresh_client.dart';
+import 'features/auth/data/datasources/remote/authentication_source_service_roble.dart';
+import 'features/auth/data/datasources/remote/i_authentication_source.dart';
+import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/domain/repositories/i_auth_repository.dart';
+import 'features/auth/ui/viewmodels/authentication_controller.dart';
 
-void main() {
+import 'core/themes/app_theme.dart';
+import 'features/auth/ui/pages/login_page.dart';
+
+void main() async {
+  await dotenv.load(fileName: ".env");
+  Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
+
+  if (!kIsWeb) {
+    Get.put<ILocalPreferences>(LocalPreferencesSecured());
+  } else {
+    Get.put<ILocalPreferences>(LocalPreferencesShared());
+  }
+
+  Get.lazyPut<IAuthenticationSource>(
+    () => AuthenticationSourceServiceRoble(),
+    fenix: true,
+  );
+
+  Get.put<http.Client>(
+    RefreshClient(http.Client(), Get.find<IAuthenticationSource>()),
+    tag: 'apiClient',
+    permanent: true,
+  );
+
+  Get.put<IAuthRepository>(AuthRepository(Get.find()));
+  Get.put(AuthenticationController(Get.find()));
+
   runApp(const MyApp());
 }
 
@@ -15,7 +52,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Eva',
       theme: AppTheme.theme,
-      home: LoginPage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(title: 'Login'),
     );
   }
 }
