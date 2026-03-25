@@ -7,8 +7,8 @@ import '../../data/repositories/course_repository.dart';
 
 // Pantalla principal
 class HomeScreen extends StatelessWidget {
+  
   final user = "Usuario";
-
   HomeScreen({super.key});
 
   final HomeController controller = Get.put(

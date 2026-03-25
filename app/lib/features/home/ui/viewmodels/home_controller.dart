@@ -21,7 +21,7 @@ class HomeController extends GetxController {
       final data = await repository.getCoursesByUserEmail();
       courses.value = data;
     } catch (e) {
-      print("❌ Error: $e");
+      print("Error: $e");
       courses.value = [];
     }
   }
@@ -30,7 +30,7 @@ class HomeController extends GetxController {
     Get.to(() => const CreateCourseScreen());
   }
 
-  void abrirCurso() {
-    Get.to(() => CourseScreen());
-  }
+  void abrirCurso(Map<String, dynamic> course) {
+  Get.to(() => CourseScreen(course: course));
+}
 }
