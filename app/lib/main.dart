@@ -14,8 +14,16 @@ import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/domain/repositories/i_auth_repository.dart';
 import 'features/auth/ui/viewmodels/authentication_controller.dart';
 
+import 'features/teacher/ui/viewmodels/create_courses_controller.dart';
+import 'features/teacher/domain/repositories/i_course_repository.dart';
+import 'features/teacher/data/repositories/course_repository.dart';
+import 'features/teacher/data/datasources/course_source_service_roble.dart';
+import 'features/teacher/data/datasources/i_course_source.dart';
+
 import 'core/themes/app_theme.dart';
 import 'features/auth/ui/pages/login_page.dart';
+
+import 'core/bindings/savedb_bindings.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -41,6 +49,10 @@ void main() async {
   Get.put<IAuthRepository>(AuthRepository(Get.find()));
   Get.put(AuthenticationController(Get.find()));
 
+  Get.lazyPut<ICourseRemoteDataSource>(() => CourseRemoteDataSource());
+  Get.put<ICourseRepository>(CourseRepository(Get.find()));
+  Get.put(CreateController(Get.find()));
+
   runApp(const MyApp());
 }
 
@@ -53,6 +65,7 @@ class MyApp extends StatelessWidget {
       title: 'Eva',
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
+      initialBinding: AppBindings(),
       home: LoginPage(title: 'Login'),
     );
   }

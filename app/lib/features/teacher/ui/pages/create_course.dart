@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../viewmodels/create_courses_controller.dart';
 
 class CreateCourseScreen extends StatelessWidget {
   const CreateCourseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final nameController = TextEditingController();
+    final nrcController = TextEditingController();
+    final createController = Get.find<CreateController>();
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),
       body: SafeArea(
@@ -71,6 +75,7 @@ class CreateCourseScreen extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         TextFormField(
+                          controller: nameController,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: const Color(0xFFFFFFFF),
@@ -101,6 +106,7 @@ class CreateCourseScreen extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         TextFormField(
+                          controller: nrcController,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: const Color(0xFFFFFFFF),
@@ -149,7 +155,11 @@ class CreateCourseScreen extends StatelessWidget {
 
                     // Botón
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        final name = nameController.text;
+                        final nrc = nrcController.text;
+                        createController.createCourse(name, nrc);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4C3F6D),
                         shape: RoundedRectangleBorder(

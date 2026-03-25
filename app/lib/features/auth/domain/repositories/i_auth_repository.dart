@@ -9,11 +9,13 @@ abstract class IAuthRepository {
 
   Future<bool> validate(String email, String validationCode);
 
+  Future<bool> addUser(String email, String name);
+  
   Future<bool> validateToken();
 
   Future<void> forgotPassword(String email);
 
-  Future<AuthenticationUser> getLoggedUser();
+  Future<AuthenticationUser?> getLoggedUser();
 
   Future<List<AuthenticationUser>> getUsers();
 }

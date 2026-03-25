@@ -23,7 +23,7 @@ class AuthenticationController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     logInfo('AuthenticationController initialized');
-    //logged.value = await validateToken();
+    logged.value = await validateToken();
   }
 
   bool get isLogged => logged.value;
@@ -31,7 +31,7 @@ class AuthenticationController extends GetxController {
   Future<bool> login(email, password) async {
     logInfo('AuthenticationController: Login $email $password');
     await authentication.login(email, password);
-    //await getLoggedUser();
+    await getLoggedUser();
     logged.value = true;
 
     return true;
@@ -58,11 +58,20 @@ class AuthenticationController extends GetxController {
 
   Future<bool> validateToken() async {
     logInfo('validateToken: validateToken');
-    var rta = await authentication.validateToken();
-    if (rta) {
-      await getLoggedUser();
+
+    var isValid = await authentication.validateToken();
+
+    if (isValid) {
+      logInfo("Token válido, usuario autenticado");
+
+      final user = await getLoggedUser();
+
+      if (user == null) {
+        logWarning("Usuario no existe en DB, pero SÍ está logueado");
+      }
     }
-    return rta;
+
+    return isValid;
   }
 
   Future<void> forgotPassword(String email) async {
@@ -70,12 +79,10 @@ class AuthenticationController extends GetxController {
     await authentication.forgotPassword(email);
   }
 
-  Future<AuthenticationUser> getLoggedUser() async {
+  Future<AuthenticationUser?> getLoggedUser() async {
     logInfo('AuthenticationController: Get Logged User');
     isLoading.value = true;
     var rta = await authentication.getLoggedUser();
-    _loggedUser.value = rta;
-    isLoading.value = false;
     return rta;
   }
 
@@ -83,5 +90,31 @@ class AuthenticationController extends GetxController {
     logInfo('AuthenticationController: Get Users');
     var rta = await authentication.getUsers();
     return rta;
+  }
+
+  Future<void> verifyAccount(
+    String email,
+    String code,
+    String password,
+    String name,
+  ) async {
+    try {
+      isLoading.value = true;
+
+      // 1. validar correo
+      await authentication.validate(email, code);
+
+      // 2. hacer login (ahora sí funciona)
+      await authentication.login(email, password);
+
+      // 3. guardar en tabla Users
+      await authentication.addUser(email, name);
+
+      Get.snackbar("Success", "Cuenta verificada correctamente");
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

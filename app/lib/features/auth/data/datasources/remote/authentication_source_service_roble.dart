@@ -41,6 +41,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       await sharedPreferences.setString('token', token);
       await sharedPreferences.setString('refreshToken', refreshToken);
       await sharedPreferences.setString('userId', data['user']['id']);
+      await sharedPreferences.setString('email', email);
+      logInfo("Email guardado en storage: $email");
       logInfo(
         "Token: $token"
         "\nRefresh Token: $refreshToken",
@@ -85,6 +87,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
     logInfo(response.statusCode);
     if (response.statusCode == 201) {
+      //await validate(email, validationCode)
       //await login(email, password);
       //await addUser(email, name);
       return Future.value();
@@ -119,6 +122,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       await sharedPreferences.remove('token');
       await sharedPreferences.remove('refreshToken');
       await sharedPreferences.remove('userId');
+      await sharedPreferences.remove('email');
       logInfo("Logged out successfully");
       return Future.value(true);
     } else {
@@ -248,6 +252,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
     }
   }
 
+  @override
   Future<bool> addUser(String email, String name) async {
     logInfo("Web service, Adding user");
     final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
@@ -282,38 +287,52 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
   }
 
   @override
-  Future<AuthenticationUser> getLoggedUser() async {
-    final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
+@override
+Future<AuthenticationUser?> getLoggedUser() async {
+  final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
 
-    final ILocalPreferences sharedPreferences = Get.find();
-    final userId = await sharedPreferences.getString('userId');
+  final ILocalPreferences sharedPreferences = Get.find();
+  final email = await sharedPreferences.getString('email');
 
-    var uri = Uri.https(baseUrl, '/database/$contract/read', {
-      'tableName': 'Users',
-      'userId': userId,
-    });
+  if (email == null) {
+    logError("No hay email en storage");
+    return null;
+  }
 
-    final token = await sharedPreferences.getString('token');
-    var response = await httpClient.get(
-      uri,
-      headers: {'Authorization': 'Bearer $token'},
+  logInfo("Buscando usuario en DB con email: $email");
+
+  var uri = Uri.https(baseUrl, '/database/$contract/read', {
+    'tableName': 'Users',
+    'email': email,
+  });
+
+  final token = await sharedPreferences.getString('token');
+
+  var response = await httpClient.get(
+    uri,
+    headers: {'Authorization': 'Bearer $token'},
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> decodedJson = jsonDecode(response.body);
+
+    logInfo("Respuesta DB: $decodedJson");
+
+    if (decodedJson.isEmpty) {
+      logWarning("Usuario NO existe en la DB");
+      return null; // 🔥 CLAVE: no explota
+    }
+
+    List<AuthenticationUser> users = List<AuthenticationUser>.from(
+      decodedJson.map((x) => AuthenticationUser.fromJson(x)),
     );
 
-    if (response.statusCode == 200) {
-      List<dynamic> decodedJson = jsonDecode(response.body);
-
-      //logInfo(decodedJson);
-
-      List<AuthenticationUser> users = List<AuthenticationUser>.from(
-        decodedJson.map((x) => AuthenticationUser.fromJson(x)),
-      );
-
-      return Future.value(users.first);
-    } else {
-      logError("Got error code ${response.statusCode}");
-      return Future.error('Error code ${response.statusCode}');
-    }
+    return users.first;
+  } else {
+    logError("Error ${response.statusCode}: ${response.body}");
+    return null; // 🔥 tampoco explota
   }
+}
 
   @override
   Future<List<AuthenticationUser>> getUsers() async {

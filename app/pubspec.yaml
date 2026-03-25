@@ -43,6 +43,9 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   flutter_dotenv: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  csv: ^5.0.2
+  file_picker: ^6.1.1
+  uuid: ^4.0.0
 
 dev_dependencies:
   flutter_test:

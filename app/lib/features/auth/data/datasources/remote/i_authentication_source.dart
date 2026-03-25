@@ -11,6 +11,8 @@ abstract class IAuthenticationSource {
 
   Future<bool> refreshToken();
 
+  Future<bool> addUser(String email, String name);
+
   Future<bool> forgotPassword(String email);
 
   Future<bool> resetPassword(
@@ -18,7 +20,7 @@ abstract class IAuthenticationSource {
 
   Future<bool> verifyToken();
 
-  Future<AuthenticationUser> getLoggedUser();
+  Future<AuthenticationUser?> getLoggedUser();
 
   Future<List<AuthenticationUser>> getUsers();
 }

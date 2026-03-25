@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodels/course_controller.dart';
+import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 
 // Pantalla principal
 class CourseScreen extends StatelessWidget {
+  final Map<String, dynamic> course;
   final user = "Usuario";
   // Constructor
-  CourseScreen({super.key});
+  CourseScreen({super.key, required this.course});
 
+  final importController = Get.find<ImportGroupsController>();
   final CourseController controller = Get.put(CourseController());
 
   bool get isTeacher => true;
 
   @override
   Widget build(BuildContext context) {
+    final courseId = course['_id'];
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -83,7 +87,20 @@ class CourseScreen extends StatelessWidget {
                                   bottom: 14,
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    try { 
+                                      await importController.importCsv(
+                                        courseId,
+                                      );
+
+                                      Get.snackbar(
+                                        "Éxito",
+                                        "Grupos importados correctamente",
+                                      );
+                                    } catch (e) {
+                                      Get.snackbar("Error", e.toString());
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF4C3F6D),
                                     shape: RoundedRectangleBorder(

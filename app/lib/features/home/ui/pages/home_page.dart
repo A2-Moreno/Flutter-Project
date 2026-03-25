@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodels/home_controller.dart';
 
+import '../../data/datasource/course_remote_data_source.dart';
+import '../../data/repositories/course_repository.dart';
+
 // Pantalla principal
 class HomeScreen extends StatelessWidget {
   final user = "Usuario";
-  // Constructor
+
   HomeScreen({super.key});
 
-  final HomeController controller = Get.put(HomeController());
+  final HomeController controller = Get.put(
+    HomeController(
+      CourseRepository(
+        CourseRemoteDataSource(),
+      ),
+    ),
+  );
 
   bool get isTeacher => true;
 
@@ -38,10 +47,9 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
 
-                  // Icono derecha
                   Text(
                     "Hola, $user",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -50,6 +58,7 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Zona principal
             Expanded(
               child: Container(
@@ -62,12 +71,23 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Obx(
-                      () => ListView.builder(
+                    Obx(() {
+                      if (controller.courses.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            "No tienes cursos inscritos",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
                         padding: const EdgeInsets.fromLTRB(18, 24, 18, 100),
                         itemCount: controller.courses.length,
                         itemBuilder: (context, index) {
-                          // Curso actual que se esta pintando en la lista
                           final course = controller.courses[index];
 
                           return Padding(
@@ -83,11 +103,10 @@ class HomeScreen extends StatelessWidget {
                                 color: const Color(0xFFFFFFFF),
                                 borderRadius: BorderRadius.circular(18),
                                 border: Border.all(
-                                  color: Color(0xFF7C6A9F),
+                                  color: const Color(0xFF7C6A9F),
                                   width: 2,
                                 ),
                               ),
-
                               child: Row(
                                 children: [
                                   Expanded(
@@ -107,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            course['name'] as String,
+                                            course['name'] ?? 'Sin nombre',
                                             style: const TextStyle(
                                               color: Color(0xFF4C3F6D),
                                               fontSize: 16,
@@ -116,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            "${course['activities']} actividades",
+                                            "${course['activities'] ?? 0} actividades",
                                             style: const TextStyle(
                                               color: Colors.black54,
                                               fontSize: 13,
@@ -127,7 +146,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: controller.abrirCurso,
+                                    onPressed: () => controller.abrirCurso(course),
                                     padding: const EdgeInsets.all(0),
                                     constraints: const BoxConstraints(),
                                     icon: const Icon(
@@ -140,9 +159,10 @@ class HomeScreen extends StatelessWidget {
                             ),
                           );
                         },
-                      ),
-                    ),
-                    // Boton para crear curso, solo profesores
+                      );
+                    }),
+
+                    // Boton crear curso
                     if (isTeacher)
                       Positioned(
                         right: 18,

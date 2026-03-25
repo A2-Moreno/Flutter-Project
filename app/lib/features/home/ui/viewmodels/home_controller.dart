@@ -1,13 +1,30 @@
 import 'package:get/get.dart';
 import '../../../teacher/ui/pages/create_course.dart';
 import '../../../course/ui/pages/course_page.dart';
+import '../../domain/repositories/i_course_repository.dart';
 
 class HomeController extends GetxController {
-  var courses = [
-    {'name': 'Programación Móvil', 'activities': 3},
-    {'name': 'Compiladores', 'activities': 0},
-    {'name': 'Proyecto Final', 'activities': 2},
-  ].obs;
+  final ICourseRepository repository;
+
+  HomeController(this.repository);
+
+  var courses = <Map<String, dynamic>>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadCourses();
+  }
+
+  void loadCourses() async {
+    try {
+      final data = await repository.getCoursesByUserEmail();
+      courses.value = data;
+    } catch (e) {
+      print("❌ Error: $e");
+      courses.value = [];
+    }
+  }
 
   void abrirCrearCurso() {
     Get.to(() => const CreateCourseScreen());
