@@ -24,12 +24,14 @@ class CourseRemoteDataSource implements ICourseRemoteDataSource {
 
     final token = await prefs.getString('token');
     final email = await prefs.getString('email');
+    final rol = await prefs.getString('rol');
 
     print("📧 Email desde storage: $email");
     print("🔐 Token: $token");
+    print("🔐 rol del usuario: $rol");
 
-    if (email == null || token == null) {
-      throw Exception("No email or token");
+    if (email == null || token == null || rol == null) {
+      throw Exception("No email or token or rol");
     }
 
     // 🔹 1. Buscar usuario por email
@@ -68,24 +70,64 @@ class CourseRemoteDataSource implements ICourseRemoteDataSource {
     print("🆔 userId: $userId");
 
     // 🔹 2. Buscar cursos
-    final courseUri = Uri.https(baseUrl, '/database/$contract/read', {
-      'tableName': 'course',
-      'profesor_id': userId.toString(),
-    });
+    if (rol == 'profesor') {
+      // 🔹 PROFESOR
+      final courseUri = Uri.https(baseUrl, '/database/$contract/read', {
+        'tableName': 'course',
+        'profesor_id': userId.toString(),
+      });
 
-    final courseResponse = await httpClient.get(
-      courseUri,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+      final response = await httpClient.get(
+        courseUri,
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
-    print("📚 Courses response: ${courseResponse.body}");
+      if (response.statusCode != 200) {
+        throw Exception("Error getting courses");
+      }
 
-    if (courseResponse.statusCode != 200) {
-      throw Exception("Error getting courses");
+      final List<dynamic> courses = jsonDecode(response.body);
+      return courses.map((e) => Map<String, dynamic>.from(e)).toList();
+    } else {
+      // 🔹 ESTUDIANTE
+
+      final membersUri = Uri.https(baseUrl, '/database/$contract/read', {
+        'tableName': 'course_members',
+        'estudiante_id': userId.toString(),
+      });
+      final membersResponse = await httpClient.get(
+        membersUri,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (membersResponse.statusCode != 200) {
+        throw Exception("Error getting course memberships");
+      }
+      final List<dynamic> memberships = jsonDecode(membersResponse.body);
+      if (memberships.isEmpty) {
+        return [];
+      }
+      final courseIds = memberships
+          .map((m) => m['course_id'].toString())
+          .toList();
+      print("📚 courseIds: $courseIds");
+      List<Map<String, dynamic>> courses = [];
+      for (var id in courseIds) {
+        final uri = Uri.https(baseUrl, '/database/$contract/read', {
+          'tableName': 'course',
+          '_id': id,
+        });
+        final res = await httpClient.get(
+          uri,
+          headers: {'Authorization': 'Bearer $token'},
+        );
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body);
+          if (data.isNotEmpty) {
+            courses.add(Map<String, dynamic>.from(data.first));
+          }
+        }
+      }
+      return courses;
     }
-
-    final List<dynamic> courses = jsonDecode(courseResponse.body);
-
-    return courses.map((e) => Map<String, dynamic>.from(e)).toList();
   }
 }

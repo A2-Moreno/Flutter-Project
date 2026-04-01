@@ -37,12 +37,15 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final data = jsonDecode(response.body);
       final token = data['accessToken'];
       final refreshToken = data['refreshToken'];
+      final rol = data['user']['role'];
       final ILocalPreferences sharedPreferences = Get.find();
+
+      //extraer datos del body como id, email y rol
       await sharedPreferences.setString('token', token);
       await sharedPreferences.setString('refreshToken', refreshToken);
       await sharedPreferences.setString('userId', data['user']['id']);
       await sharedPreferences.setString('email', email);
-      logInfo("Email guardado en storage: $email");
+      await sharedPreferences.setString('rol', rol);
       logInfo(
         "Token: $token"
         "\nRefresh Token: $refreshToken",
@@ -87,9 +90,6 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
     logInfo(response.statusCode);
     if (response.statusCode == 201) {
-      //await validate(email, validationCode)
-      //await login(email, password);
-      //await addUser(email, name);
       return Future.value();
     } else {
       logError(response.body);
@@ -137,13 +137,14 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
   @override
   Future<bool> validate(String email, String validationCode) async {
+
     final response = await httpClient.post(
       Uri.parse("$baseUrl/verify-email"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        "email": email, // Assuming validationCode is the email
+        "email": email,
         "code": validationCode,
       }),
     );
@@ -287,52 +288,52 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
   }
 
   @override
-@override
-Future<AuthenticationUser?> getLoggedUser() async {
-  final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
+  @override
+  Future<AuthenticationUser?> getLoggedUser() async {
+    final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
 
-  final ILocalPreferences sharedPreferences = Get.find();
-  final email = await sharedPreferences.getString('email');
+    final ILocalPreferences sharedPreferences = Get.find();
+    final email = await sharedPreferences.getString('email');
 
-  if (email == null) {
-    logError("No hay email en storage");
-    return null;
-  }
-
-  logInfo("Buscando usuario en DB con email: $email");
-
-  var uri = Uri.https(baseUrl, '/database/$contract/read', {
-    'tableName': 'Users',
-    'email': email,
-  });
-
-  final token = await sharedPreferences.getString('token');
-
-  var response = await httpClient.get(
-    uri,
-    headers: {'Authorization': 'Bearer $token'},
-  );
-
-  if (response.statusCode == 200) {
-    List<dynamic> decodedJson = jsonDecode(response.body);
-
-    logInfo("Respuesta DB: $decodedJson");
-
-    if (decodedJson.isEmpty) {
-      logWarning("Usuario NO existe en la DB");
-      return null; // 🔥 CLAVE: no explota
+    if (email == null) {
+      logError("No hay email en storage");
+      return null;
     }
 
-    List<AuthenticationUser> users = List<AuthenticationUser>.from(
-      decodedJson.map((x) => AuthenticationUser.fromJson(x)),
+    logInfo("Buscando usuario en DB con email: $email");
+
+    var uri = Uri.https(baseUrl, '/database/$contract/read', {
+      'tableName': 'Users',
+      'email': email,
+    });
+
+    final token = await sharedPreferences.getString('token');
+
+    var response = await httpClient.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
     );
 
-    return users.first;
-  } else {
-    logError("Error ${response.statusCode}: ${response.body}");
-    return null; // 🔥 tampoco explota
+    if (response.statusCode == 200) {
+      List<dynamic> decodedJson = jsonDecode(response.body);
+
+      logInfo("Respuesta DB: $decodedJson");
+
+      if (decodedJson.isEmpty) {
+        logWarning("Usuario NO existe en la DB");
+        return null;
+      }
+
+      List<AuthenticationUser> users = List<AuthenticationUser>.from(
+        decodedJson.map((x) => AuthenticationUser.fromJson(x)),
+      );
+
+      return users.first;
+    } else {
+      logError("Error ${response.statusCode}: ${response.body}");
+      return null;
+    }
   }
-}
 
   @override
   Future<List<AuthenticationUser>> getUsers() async {

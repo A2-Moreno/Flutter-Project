@@ -101,14 +101,15 @@ class AuthenticationController extends GetxController {
     try {
       isLoading.value = true;
 
-      // 1. validar correo
+      // 1. verificar email
       await authentication.validate(email, code);
 
-      // 2. hacer login (ahora sí funciona)
+      // 2. login (ahora sí válido)
       await authentication.login(email, password);
 
-      // 3. guardar en tabla Users
-      await authentication.addUser(email, name);
+      // 3. actualizar estado
+      logged.value = true;
+      loggedUser = await getLoggedUser();
 
       Get.snackbar("Success", "Cuenta verificada correctamente");
     } catch (e) {

@@ -19,12 +19,16 @@ class _VerificationPageState extends State<VerificationPage> {
   final TextEditingController codeController = TextEditingController();
 
   late String email;
+  late String password;
+  late String name;
 
   @override
   void initState() {
     super.initState();
     final args = Get.arguments as Map<String, dynamic>?;
     email = args?['email'] ?? '';
+    password = args?['password'] ?? '';
+    name = args?['name'] ?? '';
   }
 
   @override
@@ -46,12 +50,9 @@ class _VerificationPageState extends State<VerificationPage> {
     }
 
     try {
-      final success = await controller.validate(email, code);
-      if (success) {
-        Get.to(() => HomeScreen());
-      } else {
-        Get.snackbar("Error", "Código inválido");
-      }
+      await controller.verifyAccount(email, code, password, name);
+
+      Get.offAll(() => HomeScreen());
     } catch (e) {
       Get.snackbar("Error", "Ocurrió un problema: $e");
     }

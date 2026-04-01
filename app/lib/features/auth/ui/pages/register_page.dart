@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (success) {
         Get.to(
           () => const VerificationPage(title: "Verificación"),
-          arguments: {'email': email},
+          arguments: {'email': email, 'password': password, 'name': name},
         );
       } else {
         Get.snackbar(
