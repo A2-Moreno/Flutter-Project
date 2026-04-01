@@ -1,32 +1,22 @@
-import 'dart:io';
 import 'package:csv/csv.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+
 import '../../domain/models/group_model.dart';
 import '../../domain/models/student_model.dart';
 
 class CsvGroupParser {
   Future<List<Group>> parseCsv() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['csv'],
-      withData: true,
+    final XTypeGroup typeGroup = XTypeGroup(
+      label: 'CSV files',
+      extensions: ['csv'],
     );
 
-    if (result == null || result.files.isEmpty) {
+    final XFile? file = await openFile(acceptedTypeGroups: [typeGroup]);
+
+    if (file == null) {
       return [];
     }
-
-    final platformFile = result.files.first;
-    String csvString = '';
-
-    if (platformFile.bytes != null) {
-      csvString = String.fromCharCodes(platformFile.bytes!);
-    } else if (platformFile.path != null) {
-      final file = File(platformFile.path!);
-      csvString = await file.readAsString();
-    } else {
-      return [];
-    }
+    final csvString = await file.readAsString();
 
     List<List<dynamic>> rows = const CsvToListConverter(
       eol: '\n',
@@ -34,7 +24,6 @@ class CsvGroupParser {
 
     if (rows.isEmpty) return [];
 
-    //eliminar header
     rows.removeAt(0);
 
     Map<String, List<Student>> groupMap = {};
@@ -53,10 +42,7 @@ class CsvGroupParser {
 
       final key = "$categoryName-$groupName";
 
-      final student = Student(
-        email: email,
-        name: "$firstName $lastName",
-      );
+      final student = Student(email: email, name: "$firstName $lastName");
 
       if (!groupMap.containsKey(key)) {
         groupMap[key] = [];
@@ -75,7 +61,7 @@ class CsvGroupParser {
       groups.add(
         Group(
           categoryName: categories[key]!,
-          groupNumber: parts.sublist(1).join('-'), 
+          groupNumber: parts.sublist(1).join('-'),
           groupCode: groupCodes[key]!,
           students: students,
         ),
