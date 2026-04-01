@@ -22,33 +22,33 @@ import '../../features/save_to_db/ui/viewmodels/savedb_controller.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-
     // DATA SOURCES
     Get.lazyPut<IGroupRemoteDataSource>(
       () => GroupRemoteDataSourceRoble(),
+      fenix: true,
     );
 
-    Get.lazyPut<CsvGroupParser>(
-      () => CsvGroupParser(),
-    );
+    Get.lazyPut<CsvGroupParser>(() => CsvGroupParser(), fenix: true);
 
     // REPOSITORIES
     Get.lazyPut<IGroupCsvRepository>(
       () => GroupCsvRepositoryImpl(Get.find()),
+      fenix: true,
     );
 
     Get.lazyPut<IGroupDbRepository>(
       () => GroupDbRepositoryImpl(Get.find()),
+      fenix: true,
     );
 
     // USE CASES
-    Get.lazyPut(() => ImportGroups(Get.find()));
-    Get.lazyPut(() => ImportGroupsToDb(Get.find()));
+    Get.lazyPut(() => ImportGroups(Get.find()), fenix: true);
+    Get.lazyPut(() => ImportGroupsToDb(Get.find()), fenix: true);
 
     // CONTROLLER
-    Get.lazyPut(() => ImportGroupsController(
-          Get.find(),
-          Get.find(),
-        ));
+    Get.lazyPut(
+      () => ImportGroupsController(Get.find(), Get.find()),
+      fenix: true,
+    );
   }
 }

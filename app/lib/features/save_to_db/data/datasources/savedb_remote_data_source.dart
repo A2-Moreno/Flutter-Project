@@ -21,7 +21,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
   final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
 
   GroupRemoteDataSourceRoble({http.Client? client})
-    : httpClient = client ?? http.Client();
+      : httpClient = client ?? http.Client();
 
   Future<String> _getToken() async {
     final prefs = Get.find<ILocalPreferences>();
@@ -30,11 +30,33 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     return token;
   }
 
-  // CATEGORY
+  // ==============================
+  // CATEGORY (GET OR CREATE)
+  // ==============================
   @override
   Future<String> createCategory(String courseId, String name) async {
     final token = await _getToken();
 
+    // 🔍 BUSCAR SI YA EXISTE
+    final readUri = Uri.https(baseUrl, '/database/$contract/read', {
+      "tableName": "category",
+      "course_id": courseId,
+      "name": name,
+    });
+
+    final readResponse = await httpClient.get(
+      readUri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (readResponse.statusCode == 200) {
+      final List data = jsonDecode(readResponse.body);
+      if (data.isNotEmpty) {
+        return data.first["_id"];
+      }
+    }
+
+    // ➕ CREAR SI NO EXISTE
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
     final body = jsonEncode({
@@ -57,18 +79,15 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-
-      if (data["inserted"] != null && data["inserted"].isNotEmpty) {
-        return data["inserted"][0]["_id"];
-      }
-
-      throw Exception("No se insertó categoría");
+      return data["inserted"][0]["_id"];
     }
 
     throw Exception("Error creando categoría");
   }
 
-  // GROUP
+  // ==============================
+  // GROUP (GET OR CREATE)
+  // ==============================
   @override
   Future<String> createGroup(
     String categoryId,
@@ -77,6 +96,25 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
   ) async {
     final token = await _getToken();
 
+    // 🔍 Buscar por código (clave única)
+    final readUri = Uri.https(baseUrl, '/database/$contract/read', {
+      "tableName": "groups",
+      "code": code,
+    });
+
+    final readResponse = await httpClient.get(
+      readUri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (readResponse.statusCode == 200) {
+      final List data = jsonDecode(readResponse.body);
+      if (data.isNotEmpty) {
+        return data.first["_id"];
+      }
+    }
+
+    // ➕ Crear si no existe
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
     final body = jsonEncode({
@@ -99,18 +137,15 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-
-      if (data["inserted"] != null && data["inserted"].isNotEmpty) {
-        return data["inserted"][0]["_id"];
-      }
-
-      throw Exception("No se insertó grupo");
+      return data["inserted"][0]["_id"];
     }
 
     throw Exception("Error creando grupo");
   }
 
-  // USER (GET OR CREATE)
+  // ==============================
+  // USER (YA LO TENÍAS BIEN)
+  // ==============================
   @override
   Future<String> getOrCreateUser(String email, String name) async {
     final token = await _getToken();
@@ -133,7 +168,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       }
     }
 
-    final newUserId = const Uuid().v4();
+    final newUserId = uuid.v4();
 
     final insertUri = Uri.https(baseUrl, '/database/$contract/insert');
 
@@ -160,22 +195,34 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     logInfo("Create User: ${response.body}");
 
     if (response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-
-      if (data["inserted"] != null && data["inserted"].isNotEmpty) {
-        return data["inserted"][0]["userId"];
-      }
-
-      throw Exception("No se insertó usuario");
+      return newUserId;
     }
 
     throw Exception("Error creando usuario");
   }
 
-  // COURSE MEMBERS
+  // ==============================
+  // COURSE MEMBERS (NO DUPLICAR)
+  // ==============================
   @override
   Future<void> addUserToCourse(String userId, String courseId) async {
     final token = await _getToken();
+
+    final readUri = Uri.https(baseUrl, '/database/$contract/read', {
+      "tableName": "course_members",
+      "estudiante_id": userId,
+      "course_id": courseId,
+    });
+
+    final readResponse = await httpClient.get(
+      readUri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (readResponse.statusCode == 200) {
+      final List data = jsonDecode(readResponse.body);
+      if (data.isNotEmpty) return; // 🔥 YA EXISTE
+    }
 
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
@@ -186,7 +233,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       ],
     });
 
-    final response = await httpClient.post(
+    await httpClient.post(
       uri,
       headers: {
         "Content-Type": "application/json",
@@ -194,18 +241,30 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       },
       body: body,
     );
-
-    logInfo("Add to course: ${response.body}");
-
-    if (response.statusCode != 201) {
-      throw Exception("Error agregando usuario a curso");
-    }
   }
 
-  // GROUP MEMBERS
+  // ==============================
+  // GROUP MEMBERS (NO DUPLICAR)
+  // ==============================
   @override
   Future<void> addUserToGroup(String userId, String groupId) async {
     final token = await _getToken();
+
+    final readUri = Uri.https(baseUrl, '/database/$contract/read', {
+      "tableName": "group_members",
+      "estudiante_id": userId,
+      "group_id": groupId,
+    });
+
+    final readResponse = await httpClient.get(
+      readUri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (readResponse.statusCode == 200) {
+      final List data = jsonDecode(readResponse.body);
+      if (data.isNotEmpty) return; // 🔥 YA EXISTE
+    }
 
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
@@ -216,7 +275,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       ],
     });
 
-    final response = await httpClient.post(
+    await httpClient.post(
       uri,
       headers: {
         "Content-Type": "application/json",
@@ -224,11 +283,5 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       },
       body: body,
     );
-
-    logInfo("Add to group: ${response.body}");
-
-    if (response.statusCode != 201) {
-      throw Exception("Error agregando usuario a grupo");
-    }
   }
 }

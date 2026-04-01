@@ -92,6 +92,7 @@ class AuthenticationController extends GetxController {
     return rta;
   }
 
+  //metodo encargado de cuando se registre un usuario hcaer el sign up, validacion y logueo
   Future<void> verifyAccount(
     String email,
     String code,
@@ -104,7 +105,7 @@ class AuthenticationController extends GetxController {
       // 1. verificar email
       await authentication.validate(email, code);
 
-      // 2. login (ahora sí válido)
+      // 2. login
       await authentication.login(email, password);
 
       // 3. actualizar estado

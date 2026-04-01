@@ -39,6 +39,7 @@ class _VerificationPageState extends State<VerificationPage> {
 
   Future<void> _verifyCode() async {
     final code = codeController.text.trim();
+    
 
     if (code.isEmpty) {
       Get.snackbar(
@@ -54,7 +55,8 @@ class _VerificationPageState extends State<VerificationPage> {
 
       Get.offAll(() => HomeScreen());
     } catch (e) {
-      Get.snackbar("Error", "Ocurrió un problema: $e");
+      Get.snackbar("Error", e.toString());
+      rethrow;
     }
   }
 

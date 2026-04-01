@@ -8,7 +8,6 @@ class ImportGroups {
   ImportGroups(this.repository);
 
   Future<List<Group>> execute() {
-    print('estamos en el usecase');
     return repository.importGroups();
   }
 } 
