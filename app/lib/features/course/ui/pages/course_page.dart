@@ -45,8 +45,11 @@ class _CourseScreenState extends State<CourseScreen> {
                     children: [
                       IconButton(
                         onPressed: () => Get.back(),
+                        padding: const EdgeInsets.all(0),
+                        constraints: const BoxConstraints(),
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                       ),
+                      const SizedBox(height: 48),
                       Image.asset(
                         "assets/logo_sin_fondo.png",
                         height: MediaQuery.of(context).size.height * 0.075,
@@ -80,62 +83,73 @@ class _CourseScreenState extends State<CourseScreen> {
                     // TITLE + BUTTON
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                      child: Column(
-                        children: [
-                          if (isTeacher)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  try {
-                                    await importController.importCsv(courseId);
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          children: [
+                            if (isTeacher)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      await importController.importCsv(
+                                        courseId,
+                                      );
 
-                                    // 🔥 RECARGAR DATOS DESPUÉS DE IMPORTAR
-                                    await controller.loadCategories(courseId);
+                                      // 🔥 RECARGAR DATOS DESPUÉS DE IMPORTAR
+                                      await controller.loadCategories(courseId);
 
-                                    Get.snackbar(
-                                      "Éxito",
-                                      "Grupos importados correctamente",
-                                    );
-                                  } catch (e) {
-                                    Get.snackbar("Error", e.toString());
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4C3F6D),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
+                                      Get.snackbar(
+                                        "Éxito",
+                                        "Grupos importados correctamente",
+                                      );
+                                    } catch (e) {
+                                      Get.snackbar("Error", e.toString());
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF4C3F6D),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    "Importar Grupos",
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
-                                child: const Text(
-                                  "Importar Grupos",
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                              ),
+                            const Text(
+                              "Evaluaciones",
+                              style: TextStyle(
+                                color: Color(0xFF4c3f6d),
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          const Text(
-                            "Evaluaciones",
-                            style: TextStyle(
-                              color: Color(0xFF4c3f6d),
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
 
                     // LISTA
                     Expanded(
                       child: Obx(() {
-                        // 🔄 LOADING
+                        // LOADING
                         if (controller.isLoading.value) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
-                        // 📭 VACÍO
+                        // VACÍO
                         if (controller.activities.isEmpty) {
                           return const Center(
                             child: Text(
@@ -148,7 +162,7 @@ class _CourseScreenState extends State<CourseScreen> {
                           );
                         }
 
-                        // ✅ LISTA
+                        // LISTA
                         return ListView.builder(
                           padding: const EdgeInsets.fromLTRB(18, 0, 18, 100),
                           itemCount: controller.activities.length,
@@ -202,11 +216,13 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ElevatedButton(
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF4C3F6D),
+                                        backgroundColor: const Color(
+                                          0xFF4C3F6D,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
                                         ),
                                       ),
                                       child: const Text(
@@ -227,15 +243,44 @@ class _CourseScreenState extends State<CourseScreen> {
                     if (isTeacher)
                       Padding(
                         padding: const EdgeInsets.all(18),
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4C3F6D),
-                          ),
-                          child: const Text(
-                            "Ver resultados generales",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF4C3F6D),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 14,
+                                  horizontal: 18,
+                                ),
+                              ),
+                              child: const Text(
+                                "Ver resultados generales",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF4C3F6D),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 14,
+                                  horizontal: 18,
+                                ),
+                              ),
+                              child: const Text(
+                                "Crear evaluación",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                   ],
