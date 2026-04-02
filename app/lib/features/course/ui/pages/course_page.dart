@@ -3,21 +3,30 @@ import 'package:get/get.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 
-// Pantalla principal
-class CourseScreen extends StatelessWidget {
+class CourseScreen extends StatefulWidget {
   final Map<String, dynamic> course;
-  final user = "Usuario";
-  // Constructor
-  CourseScreen({super.key, required this.course});
 
+  const CourseScreen({super.key, required this.course});
+
+  @override
+  State<CourseScreen> createState() => _CourseScreenState();
+}
+
+class _CourseScreenState extends State<CourseScreen> {
   final importController = Get.find<ImportGroupsController>();
-  final CourseController controller = Get.put(CourseController());
+  final CourseController controller = Get.find();
 
   bool get isTeacher => true;
 
   @override
+  void initState() {
+    super.initState();
+    controller.loadCategories(widget.course['_id']);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final courseId = course['_id'];
+    final courseId = widget.course['_id'];
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -25,34 +34,28 @@ class CourseScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado superior morado
+            // HEADER
             Container(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Botón atrás
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
                         onPressed: () => Get.back(),
-                        padding: const EdgeInsets.all(0),
-                        constraints: const BoxConstraints(),
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                       ),
-                      const SizedBox(height: 48),
                       Image.asset(
                         "assets/logo_sin_fondo.png",
                         height: MediaQuery.of(context).size.height * 0.075,
                       ),
                     ],
                   ),
-
-                  // Icono derecha
                   Text(
-                    "Programación Movil",
-                    style: TextStyle(
+                    widget.course['name'] ?? "Curso",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -61,11 +64,12 @@ class CourseScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Zona principal
+
+            // BODY
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFFFFFF),
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -73,73 +77,82 @@ class CourseScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Titulo de la sección
+                    // TITLE + BUTTON
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: [
-                            if (isTeacher)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 14,
-                                  bottom: 14,
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    try { 
-                                      await importController.importCsv(
-                                        courseId,
-                                      );
+                      child: Column(
+                        children: [
+                          if (isTeacher)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    await importController.importCsv(courseId);
 
-                                      Get.snackbar(
-                                        "Éxito",
-                                        "Grupos importados correctamente",
-                                      );
-                                    } catch (e) {
-                                      Get.snackbar("Error", e.toString());
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF4C3F6D),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "Importar Grupos",
-                                    style: TextStyle(
-                                      color: const Color(0xFFFFFFFF),
-                                    ),
+                                    // 🔥 RECARGAR DATOS DESPUÉS DE IMPORTAR
+                                    await controller.loadCategories(courseId);
+
+                                    Get.snackbar(
+                                      "Éxito",
+                                      "Grupos importados correctamente",
+                                    );
+                                  } catch (e) {
+                                    Get.snackbar("Error", e.toString());
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4C3F6D),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
                                   ),
                                 ),
-                              ),
-
-                            Text(
-                              "Evaluaciones",
-                              style: TextStyle(
-                                color: Color(0xFF4c3f6d),
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                                child: const Text(
+                                  "Importar Grupos",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          const Text(
+                            "Evaluaciones",
+                            style: TextStyle(
+                              color: Color(0xFF4c3f6d),
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    // Lista de actividades
+
+                    // LISTA
                     Expanded(
-                      child: Obx(
-                        () => ListView.builder(
+                      child: Obx(() {
+                        // 🔄 LOADING
+                        if (controller.isLoading.value) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        // 📭 VACÍO
+                        if (controller.activities.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              "No hay categorías aún",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          );
+                        }
+
+                        // ✅ LISTA
+                        return ListView.builder(
                           padding: const EdgeInsets.fromLTRB(18, 0, 18, 100),
                           itemCount: controller.activities.length,
                           itemBuilder: (context, index) {
-                            // Actividad actual que se esta pintando en la lista
                             final activity = controller.activities[index];
 
                             return Padding(
@@ -152,14 +165,13 @@ class CourseScreen extends StatelessWidget {
                                   vertical: 18,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(18),
                                   border: Border.all(
-                                    color: Color(0xFF7C6A9F),
+                                    color: const Color(0xFF7C6A9F),
                                     width: 2,
                                   ),
                                 ),
-
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -169,7 +181,7 @@ class CourseScreen extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            activity['name'] as String,
+                                            activity.name,
                                             style: const TextStyle(
                                               color: Color(0xFF4C3F6D),
                                               fontSize: 16,
@@ -178,7 +190,7 @@ class CourseScreen extends StatelessWidget {
                                           ),
                                           if (isTeacher)
                                             Text(
-                                              "${activity['numero de grupos']} grupos",
+                                              "${activity.groupCount} grupos",
                                               style: const TextStyle(
                                                 color: Colors.black54,
                                                 fontSize: 13,
@@ -187,30 +199,19 @@ class CourseScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    // boton para ver grupos
-                                    Center(
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFF4C3F6D,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              24,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 18,
-                                            vertical: 14,
-                                          ),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF4C3F6D),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(24),
                                         ),
-                                        child: Text(
-                                          "Ver",
-                                          style: TextStyle(
-                                            color: const Color(0xFFFFFFFF),
-                                          ),
-                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Ver",
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                     ),
                                   ],
@@ -218,74 +219,25 @@ class CourseScreen extends StatelessWidget {
                               ),
                             );
                           },
-                        ),
-                      ),
+                        );
+                      }),
                     ),
-                    // Botones solo profesores
+
+                    // BOTONES
                     if (isTeacher)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
+                        padding: const EdgeInsets.all(18),
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF4C3F6D),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: 14,
-                              horizontal: 18,
-                            ),
+                            backgroundColor: const Color(0xFF4C3F6D),
                           ),
-                          child: Text(
+                          child: const Text(
                             "Ver resultados generales",
-                            style: TextStyle(color: const Color(0xFFFFFFFF)),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF4C3F6D),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 18,
-                              ),
-                            ),
-                            child: Text(
-                              "Invitar al curso",
-                              style: TextStyle(color: const Color(0xFFFFFFFF)),
-                            ),
-                          ),
-
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF4C3F6D),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 18,
-                              ),
-                            ),
-                            child: Text(
-                              "Crear evaluación",
-                              style: TextStyle(color: const Color(0xFFFFFFFF)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

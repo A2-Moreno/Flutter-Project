@@ -1,12 +1,29 @@
 import 'package:get/get.dart';
-
+import '../../domain/models/category_model.dart';
+import '../../domain/use_cases/get_categories_usecase.dart';
 
 class CourseController extends GetxController {
-  var activities = [
-    {'name': 'Propuesta de Proyecto', 'numero de grupos': 3},
-    {'name': 'Proyecto Flutter', 'numero de grupos': 0},
-    {'name': 'Proyecto x', 'numero de grupos': 2},
-  ].obs;
 
+  final GetCategories getCategories;
 
+  CourseController(this.getCategories);
+
+  final activities = <Category>[].obs;
+
+  final isLoading = false.obs;
+
+  Future<void> loadCategories(String courseId) async {
+    try {
+      isLoading.value = true;
+
+      final data = await getCategories.execute(courseId);
+
+      activities.assignAll(data);
+
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
