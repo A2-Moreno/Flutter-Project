@@ -9,7 +9,6 @@ import '../../../auth/ui/viewmodels/authentication_controller.dart';
 
 // Pantalla principal
 class HomeScreen extends StatelessWidget {
-  final user = "Usuario";
   HomeScreen({super.key});
 
   final HomeController controller = Get.put(
@@ -17,8 +16,6 @@ class HomeScreen extends StatelessWidget {
   );
 
   final AuthenticationController authController = Get.find();
-
-  bool get isTeacher => true;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   Text(
-                    "Hola, $user",
+                    "Hola, ${authController.userName.value}",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -175,7 +172,7 @@ class HomeScreen extends StatelessWidget {
                     }),
 
                     // Boton crear curso
-                    if (isTeacher)
+                    if (authController.isTeacher.value)
                       Positioned(
                         right: 18,
                         bottom: 18,

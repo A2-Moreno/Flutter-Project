@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
 
 import '../../domain/repositories/i_auth_repository.dart';
+import '../../../../core/i_local_preferences.dart';
 
 class AuthenticationController extends GetxController {
   final IAuthRepository authentication;
@@ -16,6 +17,10 @@ class AuthenticationController extends GetxController {
   var userName = ''.obs;
   var userEmail = ''.obs;
   var userPassword = ''.obs;
+
+  var isTeacher = false.obs;
+
+  final ILocalPreferences localPreferences = Get.find();
 
   AuthenticationController(this.authentication);
 
@@ -37,7 +42,9 @@ class AuthenticationController extends GetxController {
     await authentication.login(email, password);
     await getLoggedUser();
     logged.value = true;
-
+    userName.value = await localPreferences.getString('name') ?? '';
+    final role = await localPreferences.getString('rol');
+    isTeacher.value = role == 'profesor';
     return true;
   }
 
