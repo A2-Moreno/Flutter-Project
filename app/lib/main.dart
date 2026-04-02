@@ -21,7 +21,7 @@ import 'features/teacher/data/datasources/course_source_service_roble.dart';
 import 'features/teacher/data/datasources/i_course_source.dart';
 
 import 'core/themes/app_theme.dart';
-import 'features/auth/ui/pages/login_page.dart';
+import './central.dart';
 
 import 'core/bindings/savedb_bindings.dart';
 
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
       initialBinding: AppBindings(),
-      home: LoginPage(title: 'Login'),
+      home: Central(),
     );
   }
 }

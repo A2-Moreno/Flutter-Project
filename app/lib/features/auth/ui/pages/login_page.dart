@@ -1,14 +1,10 @@
-import 'package:app/features/home/ui/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app/features/auth/ui/pages/register_page.dart';
 import '../viewmodels/authentication_controller.dart';
 import '../../../../core/widgets/top_curve_clipper.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
-
-  final String title;
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -34,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final result = await controller.login(email, password);
       if (result) {
-        Get.to(() => HomeScreen());
+        controller.logged.value;
       }
     } catch (e) {
       Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
@@ -170,12 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 const Text("¿No tienes una cuenta?"),
                                 TextButton(
-                                  onPressed: () {
-                                    Get.to(
-                                      () =>
-                                          const RegisterPage(title: "Registro"),
-                                    );
-                                  },
+                                  onPressed: () =>
+                                      controller.signingUp.value = true,
                                   child: const Text(
                                     "Regístrate",
                                     style: TextStyle(

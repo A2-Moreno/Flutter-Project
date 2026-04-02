@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app/features/auth/ui/pages/verification_page.dart';
-
 import '../viewmodels/authentication_controller.dart';
 import '../../../../core/widgets/top_curve_clipper.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key, required this.title});
-
-  final String title;
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -51,10 +47,9 @@ class _RegisterPageState extends State<RegisterPage> {
       final success = await controller.signUp(name, email, password, false);
 
       if (success) {
-        Get.to(
-          () => const VerificationPage(title: "Verificación"),
-          arguments: {'email': email, 'password': password, 'name': name},
-        );
+        controller.userName.value = name;
+        controller.userEmail.value = email;
+        controller.userPassword.value = password;
       } else {
         Get.snackbar(
           "Error",

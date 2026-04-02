@@ -1,4 +1,3 @@
-import 'package:app/features/home/ui/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,9 +5,7 @@ import '../viewmodels/authentication_controller.dart';
 import '../../../../core/widgets/top_curve_clipper.dart';
 
 class VerificationPage extends StatefulWidget {
-  const VerificationPage({super.key, required this.title});
-
-  final String title;
+  const VerificationPage({super.key});
 
   @override
   State<VerificationPage> createState() => _VerificationPageState();
@@ -18,19 +15,6 @@ class _VerificationPageState extends State<VerificationPage> {
   final AuthenticationController controller = Get.find();
   final TextEditingController codeController = TextEditingController();
 
-  late String email;
-  late String password;
-  late String name;
-
-  @override
-  void initState() {
-    super.initState();
-    final args = Get.arguments as Map<String, dynamic>?;
-    email = args?['email'] ?? '';
-    password = args?['password'] ?? '';
-    name = args?['name'] ?? '';
-  }
-
   @override
   void dispose() {
     codeController.dispose();
@@ -39,7 +23,6 @@ class _VerificationPageState extends State<VerificationPage> {
 
   Future<void> _verifyCode() async {
     final code = codeController.text.trim();
-    
 
     if (code.isEmpty) {
       Get.snackbar(
@@ -51,9 +34,12 @@ class _VerificationPageState extends State<VerificationPage> {
     }
 
     try {
-      await controller.verifyAccount(email, code, password, name);
-
-      Get.offAll(() => HomeScreen());
+      await controller.verifyAccount(
+        controller.userEmail.value,
+        code,
+        controller.userPassword.value,
+        controller.userName.value,
+      );
     } catch (e) {
       Get.snackbar("Error", e.toString());
       rethrow;
@@ -112,8 +98,8 @@ class _VerificationPageState extends State<VerificationPage> {
                         const SizedBox(height: 25),
 
                         Text(
-                          email.isNotEmpty
-                              ? "Te enviamos un código de verificación a $email"
+                          controller.userEmail.value.isNotEmpty
+                              ? "Te enviamos un código de verificación a ${controller.userEmail.value}"
                               : "Te enviamos un código de verificación a tu correo",
                           textAlign: TextAlign.center,
                           style: const TextStyle(

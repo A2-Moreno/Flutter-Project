@@ -5,19 +5,18 @@ import '../viewmodels/home_controller.dart';
 import '../../data/datasource/course_remote_data_source.dart';
 import '../../data/repositories/course_repository.dart';
 
+import '../../../auth/ui/viewmodels/authentication_controller.dart';
+
 // Pantalla principal
 class HomeScreen extends StatelessWidget {
-  
   final user = "Usuario";
   HomeScreen({super.key});
 
   final HomeController controller = Get.put(
-    HomeController(
-      CourseRepository(
-        CourseRemoteDataSource(),
-      ),
-    ),
+    HomeController(CourseRepository(CourseRemoteDataSource())),
   );
+
+  final AuthenticationController authController = Get.find();
 
   bool get isTeacher => true;
 
@@ -39,6 +38,18 @@ class HomeScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Transform.flip(
+                        flipX: true,
+                        child: IconButton(
+                          onPressed: () => authController.logOut(),
+                          padding: const EdgeInsets.all(0),
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(
+                            Icons.exit_to_app,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 48),
                       Image.asset(
                         "assets/logo_sin_fondo.png",
@@ -146,7 +157,8 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () => controller.abrirCurso(course),
+                                    onPressed: () =>
+                                        controller.abrirCurso(course),
                                     padding: const EdgeInsets.all(0),
                                     constraints: const BoxConstraints(),
                                     icon: const Icon(

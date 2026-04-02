@@ -7,9 +7,15 @@ import '../../domain/repositories/i_auth_repository.dart';
 
 class AuthenticationController extends GetxController {
   final IAuthRepository authentication;
-  final logged = false.obs;
+  var logged = false.obs;
+  var signingUp = false.obs;
+  var validating = false.obs;
   final _loggedUser = Rxn<AuthenticationUser>();
   final RxBool isLoading = false.obs;
+
+  var userName = ''.obs;
+  var userEmail = ''.obs;
+  var userPassword = ''.obs;
 
   AuthenticationController(this.authentication);
 
@@ -26,8 +32,6 @@ class AuthenticationController extends GetxController {
     logged.value = await validateToken();
   }
 
-  bool get isLogged => logged.value;
-
   Future<bool> login(email, password) async {
     logInfo('AuthenticationController: Login $email $password');
     await authentication.login(email, password);
@@ -40,6 +44,7 @@ class AuthenticationController extends GetxController {
   Future<bool> signUp(name, email, password, bool direct) async {
     logInfo('AuthenticationController: Sign Up $email $password');
     await authentication.signUp(email, password, name, direct);
+    validating.value = true;
     return true;
   }
 
@@ -51,9 +56,10 @@ class AuthenticationController extends GetxController {
 
   Future<void> logOut() async {
     logInfo('AuthenticationController: Log Out');
-    logged.value = false;
     await authentication.logOut();
     logged.value = false;
+    loggedUser = null;
+    validating.value = false;
   }
 
   Future<bool> validateToken() async {
@@ -110,6 +116,8 @@ class AuthenticationController extends GetxController {
 
       // 3. actualizar estado
       logged.value = true;
+      signingUp.value = false;
+      validating.value = false;
       loggedUser = await getLoggedUser();
 
       Get.snackbar("Success", "Cuenta verificada correctamente");
