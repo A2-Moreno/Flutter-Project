@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../core/widgets/header.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 
@@ -30,45 +32,15 @@ class _CourseScreenState extends State<CourseScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF4c3f6d),
+      backgroundColor: const Color(0xFF4C3F6D),
       body: SafeArea(
         child: Column(
           children: [
-            // HEADER
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () => Get.back(),
-                        padding: const EdgeInsets.all(0),
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
-                      const SizedBox(height: 48),
-                      Image.asset(
-                        "assets/logo_sin_fondo.png",
-                        height: MediaQuery.of(context).size.height * 0.075,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    widget.course['name'] ?? "Curso",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+            //Header 
+            AppHeader(
+              title: widget.course['name'] ?? "Curso",
             ),
 
-            // BODY
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -80,12 +52,12 @@ class _CourseScreenState extends State<CourseScreen> {
                 ),
                 child: Column(
                   children: [
-                    // TITLE + BUTTON
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (isTeacher)
                               Padding(
@@ -95,11 +67,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     try {
-                                      await importController.importCsv(
-                                        courseId,
-                                      );
-
-                                      // 🔥 RECARGAR DATOS DESPUÉS DE IMPORTAR
+                                      await importController.importCsv(courseId);
                                       await controller.loadCategories(courseId);
 
                                       Get.snackbar(
@@ -129,7 +97,7 @@ class _CourseScreenState extends State<CourseScreen> {
                             const Text(
                               "Evaluaciones",
                               style: TextStyle(
-                                color: Color(0xFF4c3f6d),
+                                color: Color(0xFF4C3F6D),
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -139,17 +107,14 @@ class _CourseScreenState extends State<CourseScreen> {
                       ),
                     ),
 
-                    // LISTA
                     Expanded(
                       child: Obx(() {
-                        // LOADING
                         if (controller.isLoading.value) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
-                        // VACÍO
                         if (controller.activities.isEmpty) {
                           return const Center(
                             child: Text(
@@ -162,7 +127,6 @@ class _CourseScreenState extends State<CourseScreen> {
                           );
                         }
 
-                        // LISTA
                         return ListView.builder(
                           padding: const EdgeInsets.fromLTRB(18, 0, 18, 100),
                           itemCount: controller.activities.length,
@@ -220,9 +184,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                           0xFF4C3F6D,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            24,
-                                          ),
+                                          borderRadius: BorderRadius.circular(24),
                                         ),
                                       ),
                                       child: const Text(
@@ -239,7 +201,6 @@ class _CourseScreenState extends State<CourseScreen> {
                       }),
                     ),
 
-                    // BOTONES
                     if (isTeacher)
                       Padding(
                         padding: const EdgeInsets.all(18),
@@ -253,7 +214,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                   horizontal: 18,
                                 ),
@@ -270,7 +231,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                   horizontal: 18,
                                 ),

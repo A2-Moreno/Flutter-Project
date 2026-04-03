@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../viewmodels/home_controller.dart';
 
+import '../../../../core/widgets/header.dart';
+import '../viewmodels/home_controller.dart';
 import '../../data/datasource/course_remote_data_source.dart';
 import '../../data/repositories/course_repository.dart';
-
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
 
-// Pantalla principal
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
@@ -22,52 +21,29 @@ class HomeScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF4c3f6d),
+      backgroundColor: const Color(0xFF4C3F6D),
       body: SafeArea(
         child: Column(
           children: [
-            // Encabezado superior morado
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Transform.flip(
-                        flipX: true,
-                        child: IconButton(
-                          onPressed: () => authController.logOut(),
-                          padding: const EdgeInsets.all(0),
-                          constraints: const BoxConstraints(),
-                          icon: const Icon(
-                            Icons.exit_to_app,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      Image.asset(
-                        "assets/logo_sin_fondo.png",
-                        height: MediaQuery.of(context).size.height * 0.075,
-                      ),
-                    ],
-                  ),
-
-                  Text(
-                    "Hola, ${authController.userName.value}",
-                    style: const TextStyle(
+            Obx(
+              () => AppHeader(
+                title: "Hola, ${authController.userName.value}",
+                showBackButton: false,
+                leading: Transform.flip(
+                  flipX: true,
+                  child: IconButton(
+                    onPressed: () => authController.logOut(),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(
+                      Icons.exit_to_app,
                       color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
+                ),
               ),
             ),
 
-            // Zona principal
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -120,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                                   foregroundDecoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(18),
                                     border: Border.all(
-                                      color: Color(0xFF7C6A9F),
+                                      color: const Color(0xFF7C6A9F),
                                       width: 2,
                                     ),
                                   ),
@@ -172,29 +148,33 @@ class HomeScreen extends StatelessWidget {
                       );
                     }),
 
-                    // Boton crear curso
-                    if (authController.isTeacher.value)
-                      Positioned(
-                        right: 18,
-                        bottom: 18,
-                        child: ElevatedButton(
-                          onPressed: controller.abrirCrearCurso,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4C3F6D),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 14,
-                            ),
-                          ),
-                          child: const Text(
-                            "+ Crear curso",
-                            style: TextStyle(color: Color(0xFFFFFFFF)),
-                          ),
-                        ),
-                      ),
+                    Obx(
+                      () => authController.isTeacher.value
+                          ? Positioned(
+                              right: 18,
+                              bottom: 18,
+                              child: ElevatedButton(
+                                onPressed: controller.abrirCrearCurso,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4C3F6D),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "+ Crear curso",
+                                  style: TextStyle(
+                                    color: Color(0xFFFFFFFF),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                   ],
                 ),
               ),
