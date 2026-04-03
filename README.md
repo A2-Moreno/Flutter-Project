@@ -28,9 +28,4 @@ Enlace al [prototipo Figma](https://www.figma.com/proto/uQ2TtKoZOo1ELxeL2dw4DX/P
 | ---------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ![Pantalla grupo](Documentacion/MariaOrdonez//grupo-e.png) | ![Pantalla calificar](Documentacion/MariaOrdonez//calificar.png) | ![Pantalla resultado](Documentacion/MariaOrdonez//resultado.png) |
 
-### Usuarios de prueba
-Usuario profesor: augusto@uninorte.edu.co
 
-Usuario estudiante: maria@uninorte.edu.co
-
-clave: 1234

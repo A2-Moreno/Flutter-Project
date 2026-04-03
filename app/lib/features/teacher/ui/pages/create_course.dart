@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../core/widgets/header.dart';
 import '../viewmodels/create_courses_controller.dart';
 
 class CreateCourseScreen extends StatelessWidget {
@@ -10,42 +12,15 @@ class CreateCourseScreen extends StatelessWidget {
     final nameController = TextEditingController();
     final nrcController = TextEditingController();
     final createController = Get.find<CreateController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () => Get.back(),
-                        padding: const EdgeInsets.all(0),
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
-                      Image.asset(
-                        "assets/logo_sin_fondo.png",
-                        height: MediaQuery.of(context).size.height * 0.075,
-                      ),
-                    ],
-                  ),
-
-                  Text(
-                    "Crear curso",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+            // Header
+            const AppHeader(
+              title: "Crear curso",
             ),
 
             Expanded(
@@ -71,9 +46,7 @@ class CreateCourseScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
@@ -82,7 +55,20 @@ class CreateCourseScreen extends StatelessWidget {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
-                                color: Color(0xFF4c3f6d),
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                                width: 2,
                               ),
                             ),
                           ),
@@ -102,9 +88,7 @@ class CreateCourseScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           controller: nrcController,
                           decoration: InputDecoration(
@@ -113,7 +97,20 @@ class CreateCourseScreen extends StatelessWidget {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
-                                color: Color(0xFF4c3f6d),
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                                width: 2,
                               ),
                             ),
                           ),
@@ -133,9 +130,7 @@ class CreateCourseScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         TextFormField(
                           decoration: InputDecoration(
                             filled: true,
@@ -143,7 +138,20 @@ class CreateCourseScreen extends StatelessWidget {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
-                                color: Color(0xFF4c3f6d),
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4C3F6D),
+                                width: 2,
                               ),
                             ),
                           ),
@@ -153,7 +161,6 @@ class CreateCourseScreen extends StatelessWidget {
 
                     const SizedBox(height: 30),
 
-                    // Botón
                     ElevatedButton(
                       onPressed: () {
                         final name = nameController.text;
