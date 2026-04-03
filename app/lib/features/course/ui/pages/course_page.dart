@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
+import '../../../auth/ui/viewmodels/authentication_controller.dart';
 
 class CourseScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -16,7 +17,7 @@ class _CourseScreenState extends State<CourseScreen> {
   final importController = Get.find<ImportGroupsController>();
   final CourseController controller = Get.find();
 
-  bool get isTeacher => true;
+  final AuthenticationController authController = Get.find();
 
   @override
   void initState() {
@@ -87,7 +88,7 @@ class _CourseScreenState extends State<CourseScreen> {
                         alignment: Alignment.centerLeft,
                         child: Column(
                           children: [
-                            if (isTeacher)
+                            if (authController.isTeacher.value)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -202,7 +203,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          if (isTeacher)
+                                          if (authController.isTeacher.value)
                                             Text(
                                               "${activity.groupCount} grupos",
                                               style: const TextStyle(
@@ -240,7 +241,7 @@ class _CourseScreenState extends State<CourseScreen> {
                     ),
 
                     // BOTONES
-                    if (isTeacher)
+                    if (authController.isTeacher.value)
                       Padding(
                         padding: const EdgeInsets.all(18),
                         child: Row(
