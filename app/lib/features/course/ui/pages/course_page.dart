@@ -6,6 +6,7 @@ import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
 import '../../../student/ui/pages/groups_page.dart';
+import '../../../teacher/ui/pages/create_evaluation_page.dart';
 
 class CourseScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -230,7 +231,9 @@ class _CourseScreenState extends State<CourseScreen> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                    Get.to(() => const CreateEvaluationPage());
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4C3F6D),
                                 shape: RoundedRectangleBorder(
