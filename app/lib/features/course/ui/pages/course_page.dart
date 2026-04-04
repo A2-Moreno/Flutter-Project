@@ -5,6 +5,7 @@ import '../../../../core/widgets/header.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
+import '../../../student/ui/pages/groups_page.dart';
 
 class CourseScreen extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -246,6 +247,32 @@ class _CourseScreenState extends State<CourseScreen> {
                               ),
                             ),
                           ],
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => GroupsPage());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4C3F6D),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 18,
+                              ),
+                            ),
+                            child: const Text(
+                              "Tus grupos",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
                       ),
                   ],
