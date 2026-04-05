@@ -183,9 +183,11 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
-                                         if (!authController.isTeacher.value) {
+                                        if (!authController.isTeacher.value) {
                                           Get.to(() => GradeGroupPage());
-                                      }
+                                        } else {
+                                          controller.openCategory(activity);
+                                        }
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: const Color(
@@ -237,7 +239,7 @@ class _CourseScreenState extends State<CourseScreen> {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                    Get.to(() => const CreateEvaluationPage());
+                                Get.to(() => const CreateEvaluationPage());
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4C3F6D),

@@ -1,4 +1,4 @@
-import '../datasources/i_course_source.dart';
+import 'i_course_create_source.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../teacher/domain/models/course_model.dart';
@@ -6,7 +6,7 @@ import '../../../../core/i_local_preferences.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
-class CourseRemoteDataSource implements ICourseRemoteDataSource {
+class CourseRemoteDataSource implements ICourseCreateRemoteDataSource {
   final http.Client httpClient;
 
   CourseRemoteDataSource({http.Client? client})

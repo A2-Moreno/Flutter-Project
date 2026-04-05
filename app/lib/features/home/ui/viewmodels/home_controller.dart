@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../teacher/ui/pages/create_course.dart';
 import '../../../course/ui/pages/course_page.dart';
 import '../../domain/repositories/i_course_repository.dart';
+import '../../../auth/ui/viewmodels/authentication_controller.dart';
 
 class HomeController extends GetxController {
   final ICourseRepository repository;
@@ -13,7 +14,17 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadCourses();
+
+    final auth = Get.find<AuthenticationController>();
+
+    ever(auth.logged, (isLogged) {
+      if (isLogged) {
+        print("🔄 Recargando cursos...");
+        loadCourses();
+      } else {
+        courses.clear();
+      }
+    });
   }
 
   void loadCourses() async {
@@ -31,6 +42,10 @@ class HomeController extends GetxController {
   }
 
   void abrirCurso(Map<String, dynamic> course) {
-  Get.to(() => CourseScreen(course: course));
-}
+    Get.to(() => CourseScreen(course: course));
+  }
+
+  void reload() {
+    loadCourses();
+  }
 }

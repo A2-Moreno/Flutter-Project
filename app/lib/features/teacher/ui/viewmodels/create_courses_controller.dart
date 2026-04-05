@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../../../teacher/domain/models/course_model.dart';
-import '../../../teacher/domain/repositories/i_course_repository.dart';
+import '../../domain/repositories/i_course_create_repository.dart';
 import 'dart:math';
 
 String generateId() {
@@ -11,7 +11,7 @@ String generateId() {
 }
 
 class CreateController extends GetxController {
-  final ICourseRepository repository;
+  final ICourseCreateRepository repository;
 
   CreateController(this.repository);
 

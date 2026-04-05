@@ -37,8 +37,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       final data = jsonDecode(response.body);
       final token = data['accessToken'];
       final refreshToken = data['refreshToken'];
-      final name = data['user']['name'];
       final rol = data['user']['role'];
+      final name = data['user']['name'];
       final ILocalPreferences sharedPreferences = Get.find();
 
       //extraer datos del body como id, email y rol
@@ -46,8 +46,8 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       await sharedPreferences.setString('refreshToken', refreshToken);
       await sharedPreferences.setString('userId', data['user']['id']);
       await sharedPreferences.setString('email', email);
-      await sharedPreferences.setString('name', name);
       await sharedPreferences.setString('rol', rol);
+      await sharedPreferences.setString('name', name);
       logInfo(
         "Token: $token"
         "\nRefresh Token: $refreshToken",
@@ -139,6 +139,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
 
   @override
   Future<bool> validate(String email, String validationCode) async {
+
     final response = await httpClient.post(
       Uri.parse("$baseUrl/verify-email"),
       headers: <String, String>{

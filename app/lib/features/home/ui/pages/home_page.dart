@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../../core/widgets/header.dart';
 import '../viewmodels/home_controller.dart';
-import '../../data/datasource/course_remote_data_source.dart';
-import '../../data/repositories/course_repository.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final HomeController controller = Get.put(
+  /*final HomeController controller = Get.put(
     HomeController(CourseRepository(CourseRemoteDataSource())),
-  );
+  );*/
+
+  final HomeController controller = Get.find();
+  
 
   final AuthenticationController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    controller.reload();
 
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),
