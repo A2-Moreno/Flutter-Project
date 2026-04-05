@@ -184,7 +184,9 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ElevatedButton(
                                       onPressed: () {
                                         if (!authController.isTeacher.value) {
-                                          Get.to(() => GradeGroupPage());
+                                          controller.openCategoryStudent(
+                                            activity,
+                                          );
                                         } else {
                                           controller.openCategory(activity);
                                         }

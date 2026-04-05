@@ -27,7 +27,7 @@ class GroupController extends GetxController {
       error.value = "";
 
       final prefs = Get.find<ILocalPreferences>();
-      final role = await prefs.getString("role");
+      final role = await prefs.getString("rol");
       final userId = await prefs.getString("userId");
 
       print("Role: $role");
@@ -61,7 +61,8 @@ class GroupController extends GetxController {
         if (userId == null) {
           throw Exception("UserId no encontrado");
         }
-
+        print('el categrryId que llega aqui es:  $categoryId');
+        print('el USERId que llega aqui es:  $userId');
         final result = await getMyGroup.execute(categoryId, userId);
 
         if (result != null) {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../course/domain/models/category_model.dart';
 
 import '../../../../../core/widgets/header.dart';
 
 class GroupsPage extends StatelessWidget {
-  GroupsPage({super.key});
+  const GroupsPage({super.key});
 
   final List<Map<String, String>> mockGroups = const [
     {

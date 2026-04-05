@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/widgets/header.dart';
+import '../../../groups/ui/viewmodels/group_controller.dart';
+import '../../../course/domain/models/category_model.dart';
 
-class GradeGroupPage extends StatelessWidget {
-  GradeGroupPage({super.key});
+class GradeGroupPage extends StatefulWidget {
+  final Category category;
+
+  const GradeGroupPage({super.key, required this.category});
+
+  @override
+  State<GradeGroupPage> createState() => _GradeGroupPageState();
+}
+
+class _GradeGroupPageState extends State<GradeGroupPage> {
+  final GroupController controller = Get.find();
 
   final List<Map<String, dynamic>> mockMembers = [
     {
       "name": "Andres Chinchilla",
-      "criteria": [
-        "Puntualidad",
-        "Aportes",
-        "Compromiso",
-        "Actitud",
-      ],
+      "criteria": ["Puntualidad", "Aportes", "Compromiso", "Actitud"],
     },
     {
       "name": "Luis Lopez",
-      "criteria": [
-        "Puntualidad",
-        "Aportes",
-        "Compromiso",
-        "Actitud",
-      ],
+      "criteria": ["Puntualidad", "Aportes", "Compromiso", "Actitud"],
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.loadGroups(widget.category.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +41,7 @@ class GradeGroupPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: "Propuesta proyecto",
-            ),
+            AppHeader(title: widget.category.name),
 
             Expanded(
               child: Container(
@@ -48,50 +54,84 @@ class GradeGroupPage extends StatelessWidget {
                     topRight: Radius.circular(28),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: mockMembers.length,
-                        itemBuilder: (context, index) {
-                          final member = mockMembers[index];
+                child: Obx(() {
 
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: _MemberGradeCard(
-                              memberName: member["name"],
-                              criteria: List<String>.from(member["criteria"]),
-                            ),
-                          );
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.error.isNotEmpty) {
+                    return Center(child: Text(controller.error.value));
+                  }
+
+                  final group = controller.myGroup.value;
+
+                  if (group == null) {
+                    return const Center(
+                      child: Text(
+                        "No perteneces a ningún grupo en esta categoría",
+                      ),
+                    );
+                  }
+
+                  final members = group.members
+                      .map(
+                        (m) => {
+                          "name": m.name,
+                          "criteria": [
+                            "Puntualidad",
+                            "Aportes",
+                            "Compromiso",
+                            "Actitud",
+                          ],
                         },
-                      ),
-                    ),
+                      )
+                      .toList();
 
-                    const SizedBox(height: 8),
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: members.length,
+                          itemBuilder: (context, index) {
+                            final member = members[index];
 
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4C3F6D),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        "Ver resultado",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _MemberGradeCard(
+                                memberName: member["name"] as String,
+                                criteria: List<String>.from(
+                                  member["criteria"] as List,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ],
-                ),
+
+                      const SizedBox(height: 8),
+
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4C3F6D),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          "Ver resultado",
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
               ),
             ),
           ],
@@ -105,30 +145,21 @@ class _MemberGradeCard extends StatelessWidget {
   final String memberName;
   final List<String> criteria;
 
-  const _MemberGradeCard({
-    required this.memberName,
-    required this.criteria,
-  });
+  const _MemberGradeCard({required this.memberName, required this.criteria});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: const Color(0xFFB8ADD0),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFB8ADD0), width: 1),
         color: Colors.white,
       ),
       child: Column(
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: const BoxDecoration(
               color: Color(0xFFA693C8),
               borderRadius: BorderRadius.only(
@@ -155,10 +186,7 @@ class _MemberGradeCard extends StatelessWidget {
                   border: Border(
                     bottom: isLast
                         ? BorderSide.none
-                        : const BorderSide(
-                            color: Color(0xFFD3CBE3),
-                            width: 1,
-                          ),
+                        : const BorderSide(color: Color(0xFFD3CBE3), width: 1),
                   ),
                 ),
                 child: Row(
@@ -210,9 +238,7 @@ class _MemberGradeCard extends StatelessWidget {
                             ),
                             isDense: true,
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 8,
-                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
                           ),
                         ),
                       ),

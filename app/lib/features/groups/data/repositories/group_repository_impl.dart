@@ -73,7 +73,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
       table: "group_members",
       filters: {"estudiante_id": userId},
     );
-
+    print('MIEMBROSSSS:  $memberships');
     for (final membership in memberships) {
       final groupId = membership["group_id"];
 
@@ -85,13 +85,14 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
       if (groupData.isEmpty) continue;
 
       final group = groupData.first;
-
-      if (group["category_id"] != categoryId) continue;
+      print('Valor sospechoso:   $group["category_id"].toString()');
+      if (group["category_id"].toString() != categoryId.toString()) continue;
 
       final membersData = await remote.read(
         table: "group_members",
         filters: {"group_id": groupId},
       );
+      print('membersData');
 
       List<GroupMember> members = [];
 

@@ -44,7 +44,7 @@ class AuthenticationSourceServiceRoble implements IAuthenticationSource {
       //extraer datos del body como id, email y rol
       await sharedPreferences.setString('token', token);
       await sharedPreferences.setString('refreshToken', refreshToken);
-      await sharedPreferences.setString('userId', data['user']['id']);
+      //await sharedPreferences.setString('userId', data['user']['id']);
       await sharedPreferences.setString('email', email);
       await sharedPreferences.setString('rol', rol);
       await sharedPreferences.setString('name', name);

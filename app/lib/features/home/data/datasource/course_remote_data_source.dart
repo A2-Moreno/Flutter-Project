@@ -66,6 +66,7 @@ class CourseRemoteDataSource implements ICourseRemoteDataSource {
     }
 
     final userId = user['userId'];
+    prefs.setString('userId', userId);
 
     print("🆔 userId: $userId");
 
