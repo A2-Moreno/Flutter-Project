@@ -1,5 +1,5 @@
 import '../../../teacher/domain/models/course_model.dart';
 
-abstract class ICourseRemoteDataSource {
+abstract class ICourseCreateRemoteDataSource {
   Future<void> createCourse(Course course);
 }
