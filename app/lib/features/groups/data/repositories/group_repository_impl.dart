@@ -1,10 +1,10 @@
 import '../../domain/models/group_member_model.dart';
 import '../../domain/models/group_model.dart';
 import '../../domain/repositories/i_group_repository.dart';
-import '../datasources/group_source_service_roble.dart';
+import '../datasources/i_group_source_service_roble.dart';
 
 class GroupDetailRepositoryImpl implements IGroupDetailRepository {
-  final GroupDetailRemoteDataSource remote;
+  final IGroupDetailRemoteDataSource remote;
 
   GroupDetailRepositoryImpl(this.remote);
 
@@ -68,10 +68,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   // ESTUDIANTE
   // =============================
   @override
-  Future<Group?> getMyGroup(
-    String categoryId,
-    String userId,
-  ) async {
+  Future<Group?> getMyGroup(String categoryId, String userId) async {
     final memberships = await remote.read(
       table: "group_members",
       filters: {"estudiante_id": userId},
