@@ -36,7 +36,7 @@ class GroupController extends GetxController {
       logInfo("Role: $role");
       logInfo("UserId: $userId");
 
-      if (role == "profesor") {
+      if (role == "profesor" || role == null) {
         print("MODO PROFESOR");
 
         isTeacher.value = true;

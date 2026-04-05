@@ -200,13 +200,16 @@ class _CourseScreenState extends State<CourseScreen> {
                                       ),
                                     ),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () =>
+                                          controller.openCategory(activity),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF4C3F6D),
+                                        backgroundColor: const Color(
+                                          0xFF4C3F6D,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
                                         ),
                                       ),
                                       child: const Text(

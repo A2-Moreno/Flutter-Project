@@ -68,10 +68,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   // ESTUDIANTE
   // =============================
   @override
-  Future<Group?> getMyGroup(
-    String categoryId,
-    String userId,
-  ) async {
+  Future<Group?> getMyGroup(String categoryId, String userId) async {
     final memberships = await remote.read(
       table: "group_members",
       filters: {"estudiante_id": userId},
