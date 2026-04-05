@@ -1,4 +1,5 @@
 import '../models/group_model.dart';
+import '../models/all_groups_model.dart';
 
 abstract class IGroupDetailRepository {
 
@@ -10,4 +11,7 @@ abstract class IGroupDetailRepository {
     String categoryId,
     String userId,
   );
+
+  Future<List<AllMyGroups>> getAllMyGroups(String courseId,String userId);
+
 }

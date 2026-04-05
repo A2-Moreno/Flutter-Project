@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'i_group_source_service_roble.dart';
-
 import '../../../../../core/i_local_preferences.dart';
 
 class GroupDetailRemoteDataSource
@@ -24,7 +23,11 @@ class GroupDetailRemoteDataSource
   Future<String> _getToken() async {
     final prefs = Get.find<ILocalPreferences>();
     final token = await prefs.getString('token');
-    if (token == null) throw Exception("No token");
+
+    if (token == null) {
+      throw Exception("No token found");
+    }
+
     return token;
   }
 
@@ -42,14 +45,22 @@ class GroupDetailRemoteDataSource
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', query);
 
+    print("READ -> $table | filters: $filters");
+
     final response = await httpClient.get(
       uri,
       headers: {"Authorization": "Bearer $token"},
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+
+      print("RESPONSE [$table]: ${data.length}");
+
+      return data;
     }
+
+    print("ERROR [$table]: ${response.body}");
 
     throw Exception("Error reading $table");
   }

@@ -9,6 +9,7 @@ import '../data/repositories/group_repository_impl.dart';
 import '../domain/repositories/i_group_repository.dart';
 import '../domain/use_cases/get_groups_by_category_usecase.dart';
 import '../domain/use_cases/get_my_group_usecase.dart';
+import '../domain/use_cases/get_all_my_groups.dart';
 
 // CONTROLLER
 import '../ui/viewmodels/group_controller.dart';
@@ -16,7 +17,6 @@ import '../ui/viewmodels/group_controller.dart';
 class GroupDetailBinding extends Bindings {
   @override
   void dependencies() {
-
     Get.lazyPut<IGroupDetailRemoteDataSource>(
       () => GroupDetailRemoteDataSource(),
       fenix: true,
@@ -34,10 +34,13 @@ class GroupDetailBinding extends Bindings {
 
     Get.lazyPut<GetMyGroup>(() => GetMyGroup(Get.find()), fenix: true);
 
+    Get.lazyPut<GetAllMyGroups>(() => GetAllMyGroups(Get.find()), fenix: true);
+
     Get.lazyPut<GroupController>(
       () => GroupController(
         Get.find(), // GetGroupsByCategory
         Get.find(), // GetMyGroup
+        Get.find(),
       ),
       fenix: true,
     );

@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../course/domain/models/category_model.dart';
 
-import '../../../../../core/widgets/header.dart';
+import '../../../../core/widgets/header.dart';
+import '../../../groups/ui/viewmodels/group_controller.dart';
 
-class GroupsPage extends StatelessWidget {
-  const GroupsPage({super.key});
+class GroupsPage extends StatefulWidget {
+  final String courseId;
+  const GroupsPage({super.key, required this.courseId});
 
-  final List<Map<String, String>> mockGroups = const [
-    {
-      'title': 'Entrega 1',
-      'group': 'Grupo 01',
-      'status': '4/4 (Completo)',
-    },
-    {
-      'title': 'Entrega 2',
-      'group': 'Grupo 08',
-      'status': '4/4 (Completo)',
-    },
-  ];
+  @override
+  State<GroupsPage> createState() => _GroupsPageState();
+}
+
+class _GroupsPageState extends State<GroupsPage> {
+  final GroupController controller = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.courseId.isNotEmpty) {
+      controller.loadAllMyGroups(widget.courseId);
+    } else {
+      print("No se recibió courseId");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +32,7 @@ class GroupsPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: 'Grupos',
-            ),
+            const AppHeader(title: 'Grupos'),
 
             Expanded(
               child: Container(
@@ -41,23 +44,40 @@ class GroupsPage extends StatelessWidget {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
-                  itemCount: mockGroups.length,
-                  itemBuilder: (context, index) {
-                    final item = mockGroups[index];
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: GroupDeliveryCard(
-                        title: item['title']!,
-                        groupName: item['group']!,
-                        status: item['status']!,
-                        onTap: () {},
-                      ),
+                  if (controller.error.isNotEmpty) {
+                    return Center(child: Text(controller.error.value));
+                  }
+
+                  if (controller.allMyGroups.isEmpty) {
+                    return const Center(
+                      child: Text("No tienes grupos asignados"),
                     );
-                  },
-                ),
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
+                    itemCount: controller.allMyGroups.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.allMyGroups[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: GroupDeliveryCard(
+                          title: item.categoryName,
+                          groupName: item.groupName,
+                          status:
+                              "${item.membersCount}/${item.membersCount} (Completo)",
+                          onTap: () {},
+                        ),
+                      );
+                    },
+                  );
+                }),
               ),
             ),
           ],
@@ -87,17 +107,12 @@ class GroupDeliveryCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: const BoxDecoration(
                 color: Color(0xFFA693C8),
                 borderRadius: BorderRadius.only(
@@ -118,10 +133,7 @@ class GroupDeliveryCard extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xFFF8F8F8),
-                border: Border.all(
-                  color: const Color(0xFF9B8CB9),
-                  width: 1.2,
-                ),
+                border: Border.all(color: const Color(0xFF9B8CB9), width: 1.2),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),

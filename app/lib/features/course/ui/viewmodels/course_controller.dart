@@ -3,7 +3,7 @@ import '../../domain/models/category_model.dart';
 import '../../domain/use_cases/get_categories_usecase.dart';
 import '../../../groups/ui/pages/group_page.dart';
 import '../../../student/ui/pages/grade_group_page.dart';
-import '../../../../core/i_local_preferences.dart';
+import '../../../student/ui/pages/groups_page.dart';
 
 class CourseController extends GetxController {
   final GetCategories getCategories;
@@ -34,5 +34,9 @@ class CourseController extends GetxController {
 
   void openCategoryStudent(Category category) {
     Get.to(() => GradeGroupPage(category: category));
+  }
+
+  void openGroupsStudent(String courseId) {
+    Get.to(() => GroupsPage(courseId: courseId));
   }
 }
