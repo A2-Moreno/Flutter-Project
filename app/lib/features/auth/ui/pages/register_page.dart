@@ -34,6 +34,40 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Llena todos los campos son obligatorios",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    if (!emailRegex.hasMatch(email)) {
+      Get.snackbar(
+        "Error",
+        "El correo electrónico no es válido",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final passwordRegex = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$',
+    );
+    if (!passwordRegex.hasMatch(password)) {
+      Get.snackbar(
+        "Error",
+        "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     if (password != confirmPassword) {
       Get.snackbar(
         "Error",
@@ -229,25 +263,39 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         const SizedBox(height: 40),
 
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _register();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4c3f6d),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _register();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF4c3f6d),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                "Registrarse",
+                                style: TextStyle(
+                                  color: Color(0xFFdcd7d4),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            child: const Text(
-                              "Registrarse",
-                              style: TextStyle(
-                                color: Color(0xFFdcd7d4),
-                                fontWeight: FontWeight.bold,
+                            TextButton(
+                              onPressed: () =>
+                                  controller.signingUp.value = false,
+                              child: const Text(
+                                "¿Ya tienes una cuenta?",
+                                style: TextStyle(
+                                  color: Color(0xFF4c3f6d),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),

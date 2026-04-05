@@ -18,7 +18,6 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   final TextEditingController endDateController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
 
-  String? selectedCourse;
   String? selectedGroupCategory;
 
   bool puntualidad = true;
@@ -99,33 +98,20 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   InputDecoration _inputDecoration({String? hintText, Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(
-        color: Colors.black45,
-        fontSize: 12,
-      ),
+      hintStyle: const TextStyle(color: Colors.black45, fontSize: 12),
       filled: true,
       fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 14,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       suffixIcon: suffixIcon,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: Color(0xFFB6A9D0),
-        ),
+        borderSide: const BorderSide(color: Color(0xFFB6A9D0)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: Color(0xFF4C3F6D),
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: Color(0xFF4C3F6D), width: 1.5),
       ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 
@@ -150,14 +136,8 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   }) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(
-        color: Color(0xFF4C3F6D),
-        fontSize: 12,
-      ),
-      decoration: _inputDecoration(
-        hintText: hintText,
-        suffixIcon: suffixIcon,
-      ),
+      style: const TextStyle(color: Color(0xFF4C3F6D), fontSize: 12),
+      decoration: _inputDecoration(hintText: hintText, suffixIcon: suffixIcon),
     );
   }
 
@@ -176,19 +156,14 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
               value: value,
               onChanged: onChanged,
               activeColor: const Color(0xFF7E67B8),
-              side: const BorderSide(
-                color: Color(0xFF7E67B8),
-              ),
+              side: const BorderSide(color: Color(0xFF7E67B8)),
               visualDensity: VisualDensity.compact,
             ),
           ),
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                color: Color(0xFF4C3F6D),
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Color(0xFF4C3F6D), fontSize: 12),
             ),
           ),
         ],
@@ -213,9 +188,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: "Crear evaluación",
-            ),
+            const AppHeader(title: "Crear evaluación"),
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -235,34 +208,6 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                       TextFormField(
                         controller: nameController,
                         decoration: _inputDecoration(),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      _sectionLabel("Curso"),
-                      DropdownButtonFormField<String>(
-                        value: selectedCourse,
-                        decoration: _inputDecoration(),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFF4C3F6D),
-                        ),
-                        items: mockCourses
-                            .map(
-                              (course) => DropdownMenuItem(
-                                value: course,
-                                child: Text(
-                                  course,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCourse = value;
-                          });
-                        },
                       ),
 
                       const SizedBox(height: 14),
@@ -469,10 +414,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                           ),
                           child: const Text(
                             "Publicar evaluación",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
                         ),
                       ),
