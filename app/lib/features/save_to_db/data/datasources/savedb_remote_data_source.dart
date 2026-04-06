@@ -21,7 +21,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
   final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
 
   GroupRemoteDataSourceRoble({http.Client? client})
-      : httpClient = client ?? http.Client();
+    : httpClient = client ?? http.Client();
 
   Future<String> _getToken() async {
     final prefs = Get.find<ILocalPreferences>();
@@ -30,14 +30,10 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     return token;
   }
 
-  // ==============================
-  // CATEGORY (GET OR CREATE)
-  // ==============================
   @override
   Future<String> createCategory(String courseId, String name) async {
     final token = await _getToken();
 
-    // 🔍 BUSCAR SI YA EXISTE
     final readUri = Uri.https(baseUrl, '/database/$contract/read', {
       "tableName": "category",
       "course_id": courseId,
@@ -56,7 +52,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       }
     }
 
-    // ➕ CREAR SI NO EXISTE
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
     final body = jsonEncode({
@@ -85,9 +80,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     throw Exception("Error creando categoría");
   }
 
-  // ==============================
-  // GROUP (GET OR CREATE)
-  // ==============================
   @override
   Future<String> createGroup(
     String categoryId,
@@ -96,7 +88,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
   ) async {
     final token = await _getToken();
 
-    // 🔍 Buscar por código (clave única)
     final readUri = Uri.https(baseUrl, '/database/$contract/read', {
       "tableName": "groups",
       "code": code,
@@ -114,7 +105,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
       }
     }
 
-    // ➕ Crear si no existe
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
 
     final body = jsonEncode({
@@ -143,9 +133,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     throw Exception("Error creando grupo");
   }
 
-  // ==============================
-  // USER (YA LO TENÍAS BIEN)
-  // ==============================
   @override
   Future<String> getOrCreateUser(String email, String name) async {
     final token = await _getToken();
@@ -175,11 +162,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     final body = jsonEncode({
       "tableName": "Users",
       "records": [
-        {
-          "userId": newUserId,
-          "email": email,
-          "name": name,
-        },
+        {"userId": newUserId, "email": email, "name": name},
       ],
     });
 
@@ -201,9 +184,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     throw Exception("Error creando usuario");
   }
 
-  // ==============================
-  // COURSE MEMBERS (NO DUPLICAR)
-  // ==============================
   @override
   Future<void> addUserToCourse(String userId, String courseId) async {
     final token = await _getToken();
@@ -221,7 +201,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
 
     if (readResponse.statusCode == 200) {
       final List data = jsonDecode(readResponse.body);
-      if (data.isNotEmpty) return; // 🔥 YA EXISTE
+      if (data.isNotEmpty) return;
     }
 
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
@@ -243,9 +223,6 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
     );
   }
 
-  // ==============================
-  // GROUP MEMBERS (NO DUPLICAR)
-  // ==============================
   @override
   Future<void> addUserToGroup(String userId, String groupId) async {
     final token = await _getToken();
@@ -263,7 +240,7 @@ class GroupRemoteDataSourceRoble implements IGroupRemoteDataSource {
 
     if (readResponse.statusCode == 200) {
       final List data = jsonDecode(readResponse.body);
-      if (data.isNotEmpty) return; // 🔥 YA EXISTE
+      if (data.isNotEmpty) return;
     }
 
     final uri = Uri.https(baseUrl, '/database/$contract/insert');
