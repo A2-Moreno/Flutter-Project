@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/widgets/header.dart';
 import '../../../groups/ui/viewmodels/group_controller.dart';
 import '../../../activity/domain/models/activity_model.dart';
+import 'results_page.dart';
 
 class GradeGroupPage extends StatefulWidget {
   final Activity activity;
@@ -111,23 +112,54 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
 
                       const SizedBox(height: 8),
 
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4C3F6D),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4C3F6D),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Enviar",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
+
+                          const SizedBox(width: 12),
+
+                          ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => ResultsPage());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4C3F6D),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Ver resultado",
+                              style: TextStyle(color: Colors.white, fontSize: 12),
+                            ),
                           ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          "Ver resultado",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
+                        ],
                       ),
                     ],
                   );
