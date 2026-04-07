@@ -15,6 +15,8 @@ class _VerificationPageState extends State<VerificationPage> {
   final AuthenticationController controller = Get.find();
   final TextEditingController codeController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     codeController.dispose();
@@ -22,16 +24,9 @@ class _VerificationPageState extends State<VerificationPage> {
   }
 
   Future<void> _verifyCode() async {
-    final code = codeController.text.trim();
+    if (!_formKey.currentState!.validate()) return;
 
-    if (code.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Ingresa el código de verificación",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
+    final code = codeController.text.trim();
 
     try {
       await controller.verifyAccount(
@@ -97,43 +92,58 @@ class _VerificationPageState extends State<VerificationPage> {
 
                         const SizedBox(height: 25),
 
-                        Text(
-                          controller.userEmail.value.isNotEmpty
-                              ? "Te enviamos un código de verificación a ${controller.userEmail.value}"
-                              : "Te enviamos un código de verificación a tu correo",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF4C3F6D),
+                        Obx(
+                          () => Text(
+                            controller.userEmail.value.isNotEmpty
+                                ? "Te enviamos un código de verificación a ${controller.userEmail.value}"
+                                : "Te enviamos un código de verificación a tu correo",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF4C3F6D),
+                            ),
                           ),
                         ),
 
                         const SizedBox(height: 35),
 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Código de verificación",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: codeController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: 'Ingresa el código',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Código de verificación",
+                                style: TextStyle(
+                                  color: Color(0xFF4C3F6D),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("verificationCodeField"),
+                                controller: codeController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: 'Ingresa el código',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Ingresa el código de verificación";
+                                  }
+                                  if (value.trim().length != 6) {
+                                    return "El código debe tener 6 dígitos";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 40),
@@ -141,6 +151,7 @@ class _VerificationPageState extends State<VerificationPage> {
                         Center(
                           child: ElevatedButton(
                             onPressed: _verifyCode,
+                            key: const Key("verifyButton"),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF4c3f6d),
                               shape: RoundedRectangleBorder(
