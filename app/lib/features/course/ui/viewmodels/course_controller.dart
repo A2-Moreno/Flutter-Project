@@ -4,6 +4,7 @@ import '../../domain/use_cases/get_categories_usecase.dart';
 import '../../../groups/ui/pages/group_page.dart';
 import '../../../student/ui/pages/grade_group_page.dart';
 import '../../../student/ui/pages/groups_page.dart';
+import '../../../teacher/ui/pages/create_evaluation_page.dart';
 
 class CourseController extends GetxController {
   final GetCategories getCategories;
@@ -39,4 +40,14 @@ class CourseController extends GetxController {
   void openGroupsStudent(String courseId) {
     Get.to(() => GroupsPage(courseId: courseId));
   }
+  void createActivityPage (String courseId) {
+  Get.to(() =>  CreateEvaluationPage(courseId: courseId, categories: activities,));
+  }
+  /*
+final result = await Get.to(() => CreateEvaluationPage(courseId: courseId));
+
+  if (result == true) {
+    await loadCategories(courseId);
+  }
+  */
 }

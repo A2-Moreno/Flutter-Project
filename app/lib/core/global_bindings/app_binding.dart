@@ -5,6 +5,7 @@ import '../../features/save_to_db/binding/save_to_db_binding.dart';
 import '../../features/course/binding/course.binding.dart';
 import '../../features/groups/binding/groups_binding.dart';
 import '../../features/home/bindings/home_binding.dart';
+import '../../features/activity/binding/activity_binding.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -15,6 +16,7 @@ class AppBindings extends Bindings {
     SaveDbBinding().dependencies();
     CourseBinding().dependencies();
     GroupDetailBinding().dependencies();
+    ActivityBinding().dependencies();
 
   }
 }

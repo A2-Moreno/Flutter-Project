@@ -23,7 +23,7 @@ import 'features/teacher/data/datasources/i_course_create_source.dart';
 import 'core/themes/app_theme.dart';
 import './central.dart';
 
-import 'core/global_binding/app_binding.dart';
+import 'core/global_bindings/app_binding.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");

@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../activity/ui/viewmodels/activity_controller.dart';
+import '../../../auth/ui/viewmodels/authentication_controller.dart';
+import '../../../course/domain/models/category_model.dart';
 
 import '../../../../core/widgets/header.dart';
 
 class CreateEvaluationPage extends StatefulWidget {
-  const CreateEvaluationPage({super.key});
+  final String courseId;
+  final List<Category> categories;
+
+  const CreateEvaluationPage({
+    super.key,
+    required this.courseId,
+    required this.categories,
+  });
 
   @override
   State<CreateEvaluationPage> createState() => _CreateEvaluationPageState();
@@ -18,7 +28,10 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   final TextEditingController endDateController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
 
-  String? selectedGroupCategory;
+  final activityController = Get.find<ActivityController>();
+  final AuthenticationController authController = Get.find();
+
+  Category? selectedCategory;
 
   bool puntualidad = true;
   bool aportes = true;
@@ -27,18 +40,6 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
 
   bool resultadoPrivado = true;
   bool resultadoPublico = false;
-
-  final List<String> mockCourses = const [
-    'Programación móvil',
-    'Estructuras de datos',
-    'Base de datos',
-  ];
-
-  final List<String> mockCategories = const [
-    'Grupo 01',
-    'Grupo 02',
-    'Grupo 03',
-  ];
 
   Future<void> _pickDate(TextEditingController controller) async {
     final DateTime now = DateTime.now();
@@ -171,6 +172,19 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
     );
   }
 
+  DateTime _parseDateTime(String date, String time) {
+    final parts = date.split('/');
+    final timeParts = time.split(':');
+
+    return DateTime(
+      int.parse(parts[2]),
+      int.parse(parts[1]),
+      int.parse(parts[0]),
+      int.parse(timeParts[0]),
+      int.parse(timeParts[1]),
+    );
+  }
+
   @override
   void dispose() {
     nameController.dispose();
@@ -213,27 +227,27 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                       const SizedBox(height: 14),
 
                       _sectionLabel("Categoría de grupos"),
-                      DropdownButtonFormField<String>(
-                        value: selectedGroupCategory,
+                      DropdownButtonFormField<Category>(
+                        value: selectedCategory,
                         decoration: _inputDecoration(),
                         icon: const Icon(
                           Icons.keyboard_arrow_down,
                           color: Color(0xFF4C3F6D),
                         ),
-                        items: mockCategories
-                            .map(
-                              (category) => DropdownMenuItem(
-                                value: category,
-                                child: Text(
-                                  category,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            )
-                            .toList(),
+
+                        items: widget.categories.map((category) {
+                          return DropdownMenuItem<Category>(
+                            value: category,
+                            child: Text(
+                              category.name,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          );
+                        }).toList(),
+
                         onChanged: (value) {
                           setState(() {
-                            selectedGroupCategory = value;
+                            selectedCategory = value;
                           });
                         },
                       ),
@@ -383,6 +397,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                         onChanged: (value) {
                           setState(() {
                             resultadoPrivado = value ?? false;
+                            resultadoPublico = !(value ?? false);
                           });
                         },
                       ),
@@ -392,6 +407,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                         onChanged: (value) {
                           setState(() {
                             resultadoPublico = value ?? false;
+                            resultadoPrivado = !(value ?? false);
                           });
                         },
                       ),
@@ -400,7 +416,37 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
 
                       Center(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            try {
+                              final start = _parseDateTime(
+                                startDateController.text,
+                                startTimeController.text,
+                              );
+
+                              final end = _parseDateTime(
+                                endDateController.text,
+                                endTimeController.text,
+                              );
+
+                              activityController.name.value =
+                                  nameController.text;
+
+                              activityController.categoryId.value =
+                                  selectedCategory?.id ?? '';
+
+                              activityController.startDate.value = start;
+                              activityController.endDate.value = end;
+
+                              activityController.isPublic.value =
+                                  resultadoPublico;
+                              await activityController.createNewActivity(
+                                widget.courseId,
+                              );
+                              Navigator.of(context).pop(true);
+                            } catch (e) {
+                              Get.snackbar("Error", e.toString());
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4C3F6D),
                             shape: RoundedRectangleBorder(
@@ -413,7 +459,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                             elevation: 0,
                           ),
                           child: const Text(
-                            "Publicar evaluación",
+                            "Crear actividad",
                             style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
                         ),

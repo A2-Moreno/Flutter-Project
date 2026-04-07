@@ -3,8 +3,11 @@ import '../../domain/repositories/group_repository.dart';
 import '../datasources/i_savedb_remote_data_source.dart';
 
 class GroupDbRepositoryImpl implements IGroupDbRepository {
-  final IGroupRemoteDataSource remote;
 
+  final IGroupRemoteDataSource remote;
+  final Map<String, String> userCache = {};
+  final Map<String, String> categoryCache = {};
+  final Map<String, String> groupCache = {};
   GroupDbRepositoryImpl(this.remote);
 
   @override
@@ -14,9 +17,6 @@ class GroupDbRepositoryImpl implements IGroupDbRepository {
 
   @override
   Future<void> saveGroupsToDb(String courseId, List<Group> groups) async {
-    final userCache = <String, String>{};
-    final categoryCache = <String, String>{};
-    final groupCache = <String, String>{};
 
     for (final group in groups) {
 
