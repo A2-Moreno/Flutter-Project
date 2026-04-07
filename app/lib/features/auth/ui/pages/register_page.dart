@@ -19,6 +19,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     nameController.dispose();
@@ -29,53 +31,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final name = nameController.text.trim();
     final email = emailController.text.trim().toLowerCase();
     final password = passwordController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
-
-    if (name.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Todos los campos son obligatorios",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-    if (!emailRegex.hasMatch(email)) {
-      Get.snackbar(
-        "Error",
-        "El correo electrónico no es válido",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    final passwordRegex = RegExp(
-      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$',
-    );
-    if (!passwordRegex.hasMatch(password)) {
-      Get.snackbar(
-        "Error",
-        "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    if (password != confirmPassword) {
-      Get.snackbar(
-        "Error",
-        "Las contraseñas no coinciden",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
 
     try {
       final success = await controller.signUp(name, email, password, false);
@@ -138,166 +98,237 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Registro",
-                          style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const Text(
+                            "Registro",
+                            style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 40),
 
-                        // Nombre completo
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Nombre completo",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: nameController,
-                              decoration: InputDecoration(
-                                hintText: 'Nombre completo',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          const SizedBox(height: 40),
 
-                        const SizedBox(height: 25),
-
-                        // Correo
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Correo",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                hintText: 'Correo institucional',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        // Contraseña
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Contraseña",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: passwordController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                hintText: 'Contraseña',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        // Confirmar contraseña
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Confirmar contraseña",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: confirmPasswordController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                hintText: 'Confirmar contraseña',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 40),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _register();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4c3f6d),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                "Registrarse",
+                          // 🔹 NOMBRE
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Nombre completo",
                                 style: TextStyle(
-                                  color: Color(0xFFdcd7d4),
+                                  color: Color(0xFF4C3F6D),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            TextButton(
-                              onPressed: () =>
-                                  controller.signingUp.value = false,
-                              child: const Text(
-                                "¿Ya tienes una cuenta?",
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("registerNameField"),
+                                controller: nameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Nombre completo',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Ingresa tu nombre";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          // 🔹 EMAIL
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Correo",
                                 style: TextStyle(
-                                  color: Color(0xFF4c3f6d),
+                                  color: Color(0xFF4C3F6D),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("registerEmailField"),
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  hintText: 'Correo institucional',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Ingresa tu correo";
+                                  }
+
+                                  final emailRegex = RegExp(
+                                    r'^[^@]+@[^@]+\.[^@]+$',
+                                  );
+
+                                  if (!emailRegex.hasMatch(value.trim())) {
+                                    return "Correo inválido";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          // 🔹 PASSWORD
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Contraseña",
+                                style: TextStyle(
+                                  color: Color(0xFF4C3F6D),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("registerPasswordField"),
+                                controller: passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: 'Contraseña',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Ingresa tu contraseña";
+                                  }
+
+                                  List<String> errors = [];
+
+                                  if (value.length < 8) {
+                                    errors.add("• 8 caracteres");
+                                  }
+                                  if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                                    errors.add("• Una mayúscula");
+                                  }
+                                  if (!RegExp(r'[a-z]').hasMatch(value)) {
+                                    errors.add("• Una minúscula");
+                                  }
+                                  if (!RegExp(r'\d').hasMatch(value)) {
+                                    errors.add("• Un número");
+                                  }
+                                  if (!RegExp(
+                                    r'[^A-Za-z0-9]',
+                                  ).hasMatch(value)) {
+                                    errors.add("• Un símbolo");
+                                  }
+
+                                  if (errors.isNotEmpty) {
+                                    return "Debe tener:\n${errors.join('\n')}";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          // 🔹 CONFIRM PASSWORD
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Confirmar contraseña",
+                                style: TextStyle(
+                                  color: Color(0xFF4C3F6D),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("registerConfirmPasswordField"),
+                                controller: confirmPasswordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: 'Confirmar contraseña',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Confirma tu contraseña";
+                                  }
+
+                                  if (value != passwordController.text) {
+                                    return "Las contraseñas no coinciden";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 40),
+
+                          // 🔹 BOTONES
+                          Column(
+                            children: [
+                              ElevatedButton(
+                                key: const Key("registerButton"),
+                                onPressed: _register,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4c3f6d),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Registrarse",
+                                  style: TextStyle(
+                                    color: Color(0xFFdcd7d4),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                key: const Key("goToLoginButton"),
+                                onPressed: () =>
+                                    controller.signingUp.value = false,
+                                child: const Text(
+                                  "¿Ya tienes una cuenta?",
+                                  style: TextStyle(
+                                    color: Color(0xFF4c3f6d),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
