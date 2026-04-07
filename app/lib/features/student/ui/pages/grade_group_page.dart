@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 
 import '../../../../core/widgets/header.dart';
 import '../../../groups/ui/viewmodels/group_controller.dart';
-import '../../../course/domain/models/category_model.dart';
+import '../../../activity/domain/models/activity_model.dart';
 
 class GradeGroupPage extends StatefulWidget {
-  final Category category;
+  final Activity activity;
 
-  const GradeGroupPage({super.key, required this.category});
+  const GradeGroupPage({super.key, required this.activity});
 
   @override
   State<GradeGroupPage> createState() => _GradeGroupPageState();
@@ -31,7 +31,7 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
   @override
   void initState() {
     super.initState();
-    controller.loadGroups(widget.category.id);
+    controller.loadGroups(widget.activity.id);
   }
 
   @override
@@ -41,7 +41,7 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(title: widget.category.name),
+            AppHeader(title: widget.activity.name),
 
             Expanded(
               child: Container(

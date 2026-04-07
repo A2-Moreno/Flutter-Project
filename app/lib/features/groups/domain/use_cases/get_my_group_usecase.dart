@@ -7,9 +7,9 @@ class GetMyGroup {
   GetMyGroup(this.repository);
 
   Future<Group?> execute(
-    String categoryId,
+    String activityId,
     String userId,
   ) {
-    return repository.getMyGroup(categoryId, userId);
+    return repository.getMyGroup(activityId, userId);
   }
 }

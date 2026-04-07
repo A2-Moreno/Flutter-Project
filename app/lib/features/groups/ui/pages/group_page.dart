@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodels/group_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
-import '../../../course/domain/models/category_model.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
+import '../../../activity/domain/models/activity_model.dart';
 
 class GroupScreen extends StatefulWidget {
-  final Category category;
+  final Activity activity;
 
-  const GroupScreen({super.key, required this.category});
+  const GroupScreen({super.key, required this.activity});
 
   @override
   State<GroupScreen> createState() => _GroupScreenState();
@@ -36,7 +36,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-    controller.loadGroups(widget.category.id);
+    controller.loadGroups(widget.activity.id);
   }
 
   @override
@@ -69,7 +69,7 @@ class _GroupScreenState extends State<GroupScreen> {
                     ],
                   ),
                   Text(
-                    widget.category.name,
+                    widget.activity.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,

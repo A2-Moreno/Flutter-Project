@@ -21,6 +21,6 @@ class CourseBinding extends Bindings {
 
     Get.lazyPut(() => GetCategories(Get.find()), fenix: true);
 
-    Get.lazyPut(() => CourseController(Get.find()), fenix: true);
+    Get.lazyPut(() => CourseController(Get.find(), Get.find()), fenix: true);
   }
 }

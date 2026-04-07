@@ -22,10 +22,10 @@ class GroupController extends GetxController {
   final error = "".obs;
   final allMyGroups = <AllMyGroups>[].obs;
 
-  Future<void> loadGroups(String categoryId) async {
+  Future<void> loadGroups(String activityId) async {
     try {
       print("INICIANDO CARGA DE GRUPOS");
-      print("CategoryId: $categoryId");
+      print("CategoryId: $activityId");
 
       isLoading.value = true;
       error.value = "";
@@ -44,7 +44,7 @@ class GroupController extends GetxController {
         print("MODO PROFESOR");
 
         isTeacher.value = true;
-        final result = await getGroupsByCategory.execute(categoryId);
+        final result = await getGroupsByCategory.execute(activityId);
 
         print(" TOTAL GRUPOS: ${result.length}");
 
@@ -65,9 +65,9 @@ class GroupController extends GetxController {
         if (userId == null) {
           throw Exception("UserId no encontrado");
         }
-        print('el categrryId que llega aqui es:  $categoryId');
+        print('el categrryId que llega aqui es:  $activityId');
         print('el USERId que llega aqui es:  $userId');
-        final result = await getMyGroup.execute(categoryId, userId);
+        final result = await getMyGroup.execute(activityId, userId);
 
         if (result != null) {
           print("\n MI GRUPO:");

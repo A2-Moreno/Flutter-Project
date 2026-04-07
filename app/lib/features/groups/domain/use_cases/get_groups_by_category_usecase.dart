@@ -6,7 +6,7 @@ class GetGroupsByCategory {
 
   GetGroupsByCategory(this.repository);
 
-  Future<List<Group>> execute(String categoryId) {
-    return repository.getGroupsByCategory(categoryId);
+  Future<List<Group>> execute(String activityId) {
+    return repository.getGroupsByCategory(activityId);
   }
 }

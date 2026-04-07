@@ -26,6 +26,7 @@ class _CourseScreenState extends State<CourseScreen> {
   void initState() {
     super.initState();
     controller.loadCategories(widget.course['_id']);
+    controller.loadActivities(widget.course['_id']);
   }
 
   @override
@@ -120,7 +121,7 @@ class _CourseScreenState extends State<CourseScreen> {
                         if (controller.activities.isEmpty) {
                           return const Center(
                             child: Text(
-                              "No hay categorías aún",
+                              "No hay actividades aún",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black54,
@@ -170,7 +171,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                           ),
                                           if (authController.isTeacher.value)
                                             Text(
-                                              "${activity.groupCount} grupos",
+                                              "${activity.startDate} - ${activity.endDate} grupos",
                                               style: const TextStyle(
                                                 color: Colors.black54,
                                                 fontSize: 13,

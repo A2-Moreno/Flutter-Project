@@ -443,6 +443,7 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                                 widget.courseId,
                               );
                               Navigator.of(context).pop(true);
+                              //return true;
                             } catch (e) {
                               Get.snackbar("Error", e.toString());
                             }
