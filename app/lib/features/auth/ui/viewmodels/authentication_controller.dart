@@ -30,13 +30,6 @@ class AuthenticationController extends GetxController {
     _loggedUser.value = user;
   }
 
-  @override
-  Future<void> onInit() async {
-    super.onInit();
-    logInfo('AuthenticationController initialized');
-    logged.value = await validateToken();
-  }
-
   Future<bool> login(email, password) async {
     logInfo('AuthenticationController: Login $email $password');
     await authentication.login(email, password);

@@ -16,6 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     emailController.dispose();
@@ -24,6 +26,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -44,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Curva decorativa superior
+            // Curva superior
             Stack(
               children: [
                 ClipPath(
@@ -75,112 +79,142 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Bienvenido",
-                          style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const Text(
+                            "Bienvenido",
+                            style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 50),
+                          const SizedBox(height: 50),
 
-                        // Email
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Usuario",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                hintText: 'Correo Institucional',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                          // EMAIL
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Usuario",
+                                style: TextStyle(
+                                  color: Color(0xFF4C3F6D),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 30),
-
-                        // Password
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Contraseña",
-                              style: TextStyle(
-                                color: Color(0xFF4C3F6D),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: passwordController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                hintText: 'Contraseña',
-                                filled: true,
-                                fillColor: const Color(0xFFFFFFFF),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 40),
-
-                            Center(
-                              child: ElevatedButton(
-                                onPressed: _login,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4c3f6d),
-                                  shape: RoundedRectangleBorder(
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("loginEmailField"),
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  hintText: 'Correo Institucional',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  "Iniciar sesión",
-                                  style: TextStyle(
-                                    color: Color(0xFFdcd7d4),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Ingresa tu correo";
+                                  }
+
+                                  final emailRegex = RegExp(
+                                    r'^[^@]+@[^@]+\.[^@]+$',
+                                  );
+                                  if (!emailRegex.hasMatch(value)) {
+                                    return "Correo inválido";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          // PASSWORD
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Contraseña",
+                                style: TextStyle(
+                                  color: Color(0xFF4C3F6D),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("¿No tienes una cuenta?"),
-                                TextButton(
-                                  onPressed: () =>
-                                      controller.signingUp.value = true,
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                key: const Key("loginPasswordField"),
+                                controller: passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: 'Contraseña',
+                                  filled: true,
+                                  fillColor: const Color(0xFFFFFFFF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Ingresa tu contraseña";
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              const SizedBox(height: 40),
+
+                              // BOTÓN LOGIN
+                              Center(
+                                child: ElevatedButton(
+                                  key: const Key("loginButton"),
+                                  onPressed: _login,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF4c3f6d),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
                                   child: const Text(
-                                    "Regístrate",
+                                    "Iniciar sesión",
                                     style: TextStyle(
-                                      color: Color(0xFF4c3f6d),
+                                      color: Color(0xFFdcd7d4),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // REGISTRO
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text("¿No tienes una cuenta?"),
+                                  TextButton(
+                                    onPressed: () =>
+                                        controller.signingUp.value = true,
+                                    child: const Text(
+                                      "Regístrate",
+                                      style: TextStyle(
+                                        color: Color(0xFF4c3f6d),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

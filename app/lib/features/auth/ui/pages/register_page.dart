@@ -40,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
         confirmPassword.isEmpty) {
       Get.snackbar(
         "Error",
-        "Llena todos los campos son obligatorios",
+        "Todos los campos son obligatorios",
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
