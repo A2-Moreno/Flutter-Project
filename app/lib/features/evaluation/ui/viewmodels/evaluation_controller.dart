@@ -27,6 +27,7 @@ class EvaluationController extends GetxController {
 
   final isLoading = false.obs;
   final error = "".obs;
+  late Activity activity;
 
   final isEvaluationMode = false.obs;
   final isResultMode = false.obs;
@@ -48,6 +49,7 @@ class EvaluationController extends GetxController {
   // =============================
 
   Future<void> init(Activity activity) async {
+    this.activity = activity;
     try {
       isLoading.value = true;
       error.value = "";
@@ -114,11 +116,6 @@ class EvaluationController extends GetxController {
 
       final group = groupController.myGroup.value;
 
-      logInfo("GRADES: $activityId");
-      logInfo("GRADES: $grades");
-      logInfo("USER: $userId");
-      logInfo("GROUP: ${group?.id}");
-
       if (userId == null || group == null) {
         throw Exception("Datos incompletos");
       }
@@ -139,6 +136,17 @@ class EvaluationController extends GetxController {
       // cambiar a modo resultados automáticamente
       isEvaluationMode.value = false;
       isResultMode.value = true;
+      await loadResults(
+        Activity(
+          id: activityId,
+          name: "",
+          courseId: "",
+          categoryId: "",
+          startDate: DateTime.now(),
+          endDate: DateTime.now(),
+          isPublic: true,
+        ),
+      );
     } catch (e) {
       logError("Error submit: $e");
       Get.snackbar("Error", e.toString());

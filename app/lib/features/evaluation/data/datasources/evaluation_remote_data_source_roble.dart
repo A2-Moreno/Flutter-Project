@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:loggy/loggy.dart';
-import 'package:uuid/uuid.dart';
 import 'dart:math';
 
 import '../../../../../core/i_local_preferences.dart';
@@ -79,13 +78,11 @@ class EvaluationRemoteDataSourceRoble
     String evaluatorId,
     Map<String, Map<String, double>> data,
   ) async {
-    logInfo('Llegamos al datsource de evaluaciones todo bien hasta aqui');
 
     final token = await _getToken();
 
     for (final entry in data.entries) {
       final evaluatedId = entry.key;
-      logInfo('Creo que el problema es el evaluatedId: $evaluatedId');
       final scores = entry.value;
 
       final evaluationId = generateId();
@@ -95,6 +92,7 @@ class EvaluationRemoteDataSourceRoble
         "tableName": "evaluation",
         "records": [
           {
+            "evaluation_id": evaluationId,
             "activity_id": activityId,
             "group_id": groupId,
             "evaluator_id": evaluatorId,
@@ -113,8 +111,6 @@ class EvaluationRemoteDataSourceRoble
         },
         body: evalBody,
       );
-      logInfo('codigo de status');
-      logInfo(evalResponse.statusCode);
 
       if (evalResponse.statusCode != 201) {
         throw Exception("Error creando evaluation");
