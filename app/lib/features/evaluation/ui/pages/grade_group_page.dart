@@ -5,6 +5,7 @@ import '../../../../core/widgets/header.dart';
 import '../../../groups/ui/viewmodels/group_controller.dart';
 import '../../../activity/domain/models/activity_model.dart';
 import 'results_page.dart';
+import '../viewmodels/evaluation_controller.dart';
 
 class GradeGroupPage extends StatefulWidget {
   final Activity activity;
@@ -17,22 +18,20 @@ class GradeGroupPage extends StatefulWidget {
 
 class _GradeGroupPageState extends State<GradeGroupPage> {
   final GroupController controller = Get.find();
+  final EvaluationController evalController = Get.find();
 
-  final List<Map<String, dynamic>> mockMembers = [
-    {
-      "name": "Andres Chinchilla",
-      "criteria": ["Puntualidad", "Aportes", "Compromiso", "Actitud"],
-    },
-    {
-      "name": "Luis Lopez",
-      "criteria": ["Puntualidad", "Aportes", "Compromiso", "Actitud"],
-    },
+  final List<String> criteria = [
+    "Puntualidad",
+    "Aportes",
+    "Compromiso",
+    "Actitud",
   ];
 
   @override
   void initState() {
     super.initState();
     controller.loadGroups(widget.activity.id);
+    evalController.init(widget.activity);
   }
 
   @override
@@ -56,8 +55,8 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                   ),
                 ),
                 child: Obx(() {
-
-                  if (controller.isLoading.value) {
+                  if (controller.isLoading.value ||
+                      evalController.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -75,19 +74,7 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                     );
                   }
 
-                  final members = group.members
-                      .map(
-                        (m) => {
-                          "name": m.name,
-                          "criteria": [
-                            "Puntualidad",
-                            "Aportes",
-                            "Compromiso",
-                            "Actitud",
-                          ],
-                        },
-                      )
-                      .toList();
+                  final members = group.members;
 
                   return Column(
                     children: [
@@ -100,10 +87,9 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: _MemberGradeCard(
-                                memberName: member["name"] as String,
-                                criteria: List<String>.from(
-                                  member["criteria"] as List,
-                                ),
+                                memberName: member.name,
+                                evaluatedUserId: member.userId,
+                                criteria: criteria,
                               ),
                             );
                           },
@@ -112,33 +98,37 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
 
                       const SizedBox(height: 8),
 
+                      // 🔹 BOTÓN SOLO EN MODO EVALUACIÓN
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4C3F6D),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 12,
-                              ),
-                              elevation: 0,
-                            ),
-                            child: const Text(
-                              "Enviar",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
+                          Obx(
+                            () => evalController.isEvaluationMode.value
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      evalController.submit(widget.activity.id);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF4C3F6D),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(24),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 12,
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: const Text(
+                                      "Enviar evaluacion",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                           ),
-
-                          const SizedBox(width: 12),
-
                           ElevatedButton(
                             onPressed: () {
                               Get.to(() => ResultsPage());
@@ -156,7 +146,10 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                             ),
                             child: const Text(
                               "Ver resultado",
-                              style: TextStyle(color: Colors.white, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -175,12 +168,19 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
 
 class _MemberGradeCard extends StatelessWidget {
   final String memberName;
+  final String evaluatedUserId;
   final List<String> criteria;
 
-  const _MemberGradeCard({required this.memberName, required this.criteria});
+  const _MemberGradeCard({
+    required this.memberName,
+    required this.evaluatedUserId,
+    required this.criteria,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final EvaluationController evalController = Get.find();
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -253,26 +253,52 @@ class _MemberGradeCard extends StatelessWidget {
                           horizontal: 10,
                           vertical: 4,
                         ),
-                        child: TextFormField(
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Color(0xFF4C3F6D),
-                            fontSize: 12,
-                          ),
-                          decoration: const InputDecoration(
-                            hintText: "0.0",
-                            hintStyle: TextStyle(
-                              color: Color(0xFF7A7090),
+                        child: Obx(() {
+                          // 🔹 MODO RESULTADOS
+                          if (evalController.isResultMode.value) {
+                            final avg = evalController.getAverage(criterion);
+
+                            return Text(
+                              avg.toStringAsFixed(1),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Color(0xFF4C3F6D),
+                                fontSize: 12,
+                              ),
+                            );
+                          }
+
+                          // 🔹 MODO EVALUACIÓN
+                          return TextFormField(
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFF4C3F6D),
                               fontSize: 12,
                             ),
-                            isDense: true,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          ),
-                        ),
+                            decoration: const InputDecoration(
+                              hintText: "0.0",
+                              hintStyle: TextStyle(
+                                color: Color(0xFF7A7090),
+                                fontSize: 12,
+                              ),
+                              isDense: true,
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(vertical: 8),
+                            ),
+                            onChanged: (value) {
+                              final parsed = double.tryParse(value) ?? 0;
+
+                              evalController.setGrade(
+                                evaluatedUserId,
+                                criterion,
+                                parsed,
+                              );
+                            },
+                          );
+                        }),
                       ),
                     ),
                   ],

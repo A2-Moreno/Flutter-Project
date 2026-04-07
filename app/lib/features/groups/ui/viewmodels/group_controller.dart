@@ -70,16 +70,7 @@ class GroupController extends GetxController {
         final result = await getMyGroup.execute(activityId, userId);
 
         if (result != null) {
-          print("\n MI GRUPO:");
-          print("Grupo: ${result.name} (ID: ${result.id})");
-
-          for (var member in result.members) {
-            print(" - ${member.name} | ${member.email}");
-          }
-
           myGroup.value = result;
-        } else {
-          print("El estudiante no pertenece a ningún grupo en esta categoría");
         }
       }
 
@@ -112,14 +103,6 @@ class GroupController extends GetxController {
       print('El courseId recibid es:  $courseId');
       print('El userId recibid es:  $userId');
       final result = await getAllMyGroups.execute(courseId, userId);
-
-      print("TOTAL GRUPOS DEL ESTUDIANTE: ${result.length}");
-
-      for (var g in result) {
-        print("\nCategoria: ${g.categoryName}");
-        print("Grupo: ${g.groupName}");
-        print("Integrantes: ${g.membersCount}");
-      }
 
       allMyGroups.assignAll(result);
     } catch (e) {
