@@ -13,7 +13,11 @@ class GroupController extends GetxController {
   final GetMyGroup getMyGroup;
   final GetAllMyGroups getAllMyGroups;
 
-  GroupController(this.getGroupsByCategory, this.getMyGroup, this.getAllMyGroups);
+  GroupController(
+    this.getGroupsByCategory,
+    this.getMyGroup,
+    this.getAllMyGroups,
+  );
 
   final isLoading = false.obs;
   final groups = <Group>[].obs;
@@ -116,5 +120,9 @@ class GroupController extends GetxController {
   Future<void> refreshGroups(String categoryId) async {
     print("🔄 REFRESH DE GRUPOS");
     await loadGroups(categoryId);
+  }
+
+  void openGroup(String groupID) {
+    //Get.to(() => GroupPage(groupID: groupID));
   }
 }
