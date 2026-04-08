@@ -45,10 +45,6 @@ class MockAuthController extends GetxController
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// ----------------------
-/// MAIN TEST
-/// ----------------------
-
 void main() {
   late MockActivityController activityController;
 
@@ -70,9 +66,6 @@ void main() {
     Get.reset();
   });
 
-  /// ----------------------
-  /// RENDER
-  /// ----------------------
   testWidgets('Renderiza correctamente', (tester) async {
     await tester.pumpWidget(
       GetMaterialApp(
@@ -85,9 +78,6 @@ void main() {
     expect(find.text("Categoría de grupos"), findsOneWidget);
   });
 
-  /// ----------------------
-  /// INPUT
-  /// ----------------------
   testWidgets('Permite escribir en los campos', (tester) async {
     await tester.pumpWidget(
       GetMaterialApp(
@@ -107,9 +97,6 @@ void main() {
     expect(find.text("10:00"), findsOneWidget);
   });
 
-  /// ----------------------
-  /// VALIDACIÓN VACÍOS
-  /// ----------------------
   testWidgets('Muestra errores si campos están vacíos', (tester) async {
     await tester.pumpWidget(
       GetMaterialApp(
@@ -127,9 +114,6 @@ void main() {
     expect(find.text("Hora requerida"), findsWidgets);
   });
 
-  /// ----------------------
-  /// VALIDACIÓN FECHAS
-  /// ----------------------
   testWidgets('Valida que cierre sea posterior al inicio', (tester) async {
     await tester.pumpWidget(
       GetMaterialApp(
@@ -141,13 +125,11 @@ void main() {
 
     await tester.enterText(fields.at(0), "Parcial");
 
-    // seleccionar categoría
     await tester.tap(find.byType(DropdownButtonFormField<Category>));
     await tester.pumpAndSettle();
     await tester.tap(find.text("Grupo A").last);
     await tester.pumpAndSettle();
 
-    // inicio > fin (ERROR)
     await tester.enterText(fields.at(1), "05/01/2026");
     await tester.enterText(fields.at(2), "10:00");
     await tester.enterText(fields.at(3), "04/01/2026");
@@ -160,9 +142,6 @@ void main() {
     expect(find.text("El cierre debe ser posterior al inicio"), findsOneWidget);
   });
 
-  /// ----------------------
-  /// FLUJO EXITOSO
-  /// ----------------------
   testWidgets('Crea evaluación correctamente', (tester) async {
     await tester.pumpWidget(
       GetMaterialApp(
@@ -174,13 +153,11 @@ void main() {
 
     await tester.enterText(fields.at(0), "Parcial Final");
 
-    // categoría
     await tester.tap(find.byType(DropdownButtonFormField<Category>));
     await tester.pumpAndSettle();
     await tester.tap(find.text("Grupo A").last);
     await tester.pumpAndSettle();
 
-    // fechas válidas
     await tester.enterText(fields.at(1), "01/01/2026");
     await tester.enterText(fields.at(2), "10:00");
     await tester.enterText(fields.at(3), "02/01/2026");
