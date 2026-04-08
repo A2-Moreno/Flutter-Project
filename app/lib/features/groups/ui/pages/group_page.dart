@@ -4,6 +4,7 @@ import '../viewmodels/group_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
 import '../../../activity/domain/models/activity_model.dart';
+import '../../../../core/widgets/header.dart';
 
 class GroupScreen extends StatefulWidget {
   final Activity activity;
@@ -42,6 +43,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),
@@ -49,36 +51,7 @@ class _GroupScreenState extends State<GroupScreen> {
         child: Column(
           children: [
             //Header
-            //AppHeader(title: widget.category.name),
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: () => Get.back(),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
-                      Image.asset(
-                        "assets/logo_sin_fondo.png",
-                        height: MediaQuery.of(context).size.height * 0.075,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    widget.activity.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            AppHeader(title: widget.activity.name),
 
             Expanded(
               child: Container(
@@ -135,7 +108,7 @@ class _GroupScreenState extends State<GroupScreen> {
                               padding: const EdgeInsets.only(bottom: 20),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(18),
-                                onTap: () => "",
+                                onTap: () => controller.openGroup(group.id),
                                 child: Container(
                                   width: screenWidth * 0.9,
                                   height: screenWidth * 0.3,
@@ -198,7 +171,7 @@ class _GroupScreenState extends State<GroupScreen> {
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 70),
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 40),
                       child: Center(
                         child: Column(
                           children: [
@@ -213,7 +186,7 @@ class _GroupScreenState extends State<GroupScreen> {
                             Container(
                               margin: const EdgeInsets.only(top: 10),
                               width: screenWidth * 0.65,
-                              height: screenWidth * 0.4,
+                              height: screenHeight * 0.2,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFFFFF),
                                 borderRadius: BorderRadius.circular(18),
