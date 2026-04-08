@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import '../../../../core/widgets/header.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
@@ -34,6 +35,14 @@ class _CourseScreenState extends State<CourseScreen> {
   Widget build(BuildContext context) {
     final courseId = widget.course['_id'];
     final screenWidth = MediaQuery.of(context).size.width;
+    String formatDateEs(DateTime date) {
+      final formatted = DateFormat(
+        "EEEE, d 'de' MMMM 'de' yyyy - hh:mm a",
+        'es',
+      ).format(date);
+
+      return formatted[0].toUpperCase() + formatted.substring(1);
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),
@@ -170,14 +179,15 @@ class _CourseScreenState extends State<CourseScreen> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          if (authController.isTeacher.value)
-                                            Text(
-                                              "${activity.startDate} - ${activity.endDate} grupos",
+                                          Flexible(
+                                            child: Text(
+                                              formatDateEs(activity.endDate),
                                               style: const TextStyle(
                                                 color: Colors.black54,
                                                 fontSize: 13,
                                               ),
                                             ),
+                                          ),
                                         ],
                                       ),
                                     ),
