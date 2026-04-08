@@ -28,6 +28,8 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
   final TextEditingController endDateController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   final activityController = Get.find<ActivityController>();
   final AuthenticationController authController = Get.find();
 
@@ -134,9 +136,11 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
     required TextEditingController controller,
     required String hintText,
     Widget? suffixIcon,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
+      validator: validator,
       style: const TextStyle(color: Color(0xFF4C3F6D), fontSize: 12),
       decoration: _inputDecoration(hintText: hintText, suffixIcon: suffixIcon),
     );
@@ -214,258 +218,282 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
                     topRight: Radius.circular(28),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel("Nombre de la evaluación"),
-                      TextFormField(
-                        controller: nameController,
-                        decoration: _inputDecoration(),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      _sectionLabel("Categoría de grupos"),
-                      DropdownButtonFormField<Category>(
-                        value: selectedCategory,
-                        decoration: _inputDecoration(),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFF4C3F6D),
-                        ),
-
-                        items: widget.categories.map((category) {
-                          return DropdownMenuItem<Category>(
-                            value: category,
-                            child: Text(
-                              category.name,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          );
-                        }).toList(),
-
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value;
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      _sectionLabel("Ventana de tiempo"),
-
-                      const Text(
-                        "Inicio",
-                        style: TextStyle(
-                          color: Color(0xFF4C3F6D),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: _customField(
-                              controller: startDateController,
-                              hintText: "Fecha",
-                              suffixIcon: IconButton(
-                                onPressed: () => _pickDate(startDateController),
-                                icon: const Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: Color(0xFF4C3F6D),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _customField(
-                              controller: startTimeController,
-                              hintText: "Hora",
-                              suffixIcon: IconButton(
-                                onPressed: () => _pickTime(startTimeController),
-                                icon: const Icon(
-                                  Icons.access_time,
-                                  color: Color(0xFF4C3F6D),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      const Text(
-                        "Cierre",
-                        style: TextStyle(
-                          color: Color(0xFF4C3F6D),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: _customField(
-                              controller: endDateController,
-                              hintText: "Fecha",
-                              suffixIcon: IconButton(
-                                onPressed: () => _pickDate(endDateController),
-                                icon: const Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: Color(0xFF4C3F6D),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _customField(
-                              controller: endTimeController,
-                              hintText: "Hora",
-                              suffixIcon: IconButton(
-                                onPressed: () => _pickTime(endTimeController),
-                                icon: const Icon(
-                                  Icons.access_time,
-                                  color: Color(0xFF4C3F6D),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      _sectionLabel("Criterios a evaluar"),
-                      _checkboxTile(
-                        value: puntualidad,
-                        title: "Puntualidad",
-                        onChanged: (value) {
-                          setState(() {
-                            puntualidad = value ?? false;
-                          });
-                        },
-                      ),
-                      _checkboxTile(
-                        value: aportes,
-                        title: "Aportes",
-                        onChanged: (value) {
-                          setState(() {
-                            aportes = value ?? false;
-                          });
-                        },
-                      ),
-                      _checkboxTile(
-                        value: compromiso,
-                        title: "Compromiso",
-                        onChanged: (value) {
-                          setState(() {
-                            compromiso = value ?? false;
-                          });
-                        },
-                      ),
-                      _checkboxTile(
-                        value: actitud,
-                        title: "Actitud",
-                        onChanged: (value) {
-                          setState(() {
-                            actitud = value ?? false;
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      _sectionLabel("Resultados"),
-                      _checkboxTile(
-                        value: resultadoPrivado,
-                        title: "Privado",
-                        onChanged: (value) {
-                          setState(() {
-                            resultadoPrivado = value ?? false;
-                            resultadoPublico = !(value ?? false);
-                          });
-                        },
-                      ),
-                      _checkboxTile(
-                        value: resultadoPublico,
-                        title: "Público",
-                        onChanged: (value) {
-                          setState(() {
-                            resultadoPublico = value ?? false;
-                            resultadoPrivado = !(value ?? false);
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              final start = _parseDateTime(
-                                startDateController.text,
-                                startTimeController.text,
-                              );
-
-                              final end = _parseDateTime(
-                                endDateController.text,
-                                endTimeController.text,
-                              );
-
-                              activityController.name.value =
-                                  nameController.text;
-
-                              activityController.categoryId.value =
-                                  selectedCategory?.id ?? '';
-
-                              activityController.startDate.value = start;
-                              activityController.endDate.value = end;
-
-                              activityController.isPublic.value =
-                                  resultadoPublico;
-                              await activityController.createNewActivity(
-                                widget.courseId,
-                              );
-                              Navigator.of(context).pop(true);
-                              //return true;
-                            } catch (e) {
-                              Get.snackbar("Error", e.toString());
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sectionLabel("Nombre de la evaluación"),
+                        TextFormField(
+                          controller: nameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "El nombre es obligatorio";
                             }
+                            return null;
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4C3F6D),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 22,
-                              vertical: 12,
-                            ),
-                            elevation: 0,
+                          decoration: _inputDecoration(),
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        _sectionLabel("Categoría de grupos"),
+                        DropdownButtonFormField<Category>(
+                          value: selectedCategory,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Selecciona una categoría";
+                            }
+                            return null;
+                          },
+                          decoration: _inputDecoration(),
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color(0xFF4C3F6D),
                           ),
-                          child: const Text(
-                            "Crear actividad",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
+
+                          items: widget.categories.map((category) {
+                            return DropdownMenuItem<Category>(
+                              value: category,
+                              child: Text(
+                                category.name,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            );
+                          }).toList(),
+
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategory = value;
+                            });
+                          },
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        _sectionLabel("Ventana de tiempo"),
+
+                        const Text(
+                          "Inicio",
+                          style: TextStyle(
+                            color: Color(0xFF4C3F6D),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: _customField(
+                                controller: startDateController,
+                                hintText: "Fecha",
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Fecha requerida";
+                                  }
+                                  return null;
+                                },
+                                suffixIcon: IconButton(
+                                  onPressed: () =>
+                                      _pickDate(startDateController),
+                                  icon: const Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: Color(0xFF4C3F6D),
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: _customField(
+                                controller: startTimeController,
+                                hintText: "Hora",
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Hora requerida";
+                                  }
+                                  return null;
+                                },
+                                suffixIcon: IconButton(
+                                  onPressed: () =>
+                                      _pickTime(startTimeController),
+                                  icon: const Icon(
+                                    Icons.access_time,
+                                    color: Color(0xFF4C3F6D),
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        const Text(
+                          "Cierre",
+                          style: TextStyle(
+                            color: Color(0xFF4C3F6D),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: _customField(
+                                controller: endDateController,
+                                hintText: "Fecha",
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Fecha requerida";
+                                  }
+                                  return null;
+                                },
+                                suffixIcon: IconButton(
+                                  onPressed: () => _pickDate(endDateController),
+                                  icon: const Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: Color(0xFF4C3F6D),
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: _customField(
+                                controller: endTimeController,
+                                hintText: "Hora",
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Hora requerida";
+                                  }
+
+                                  // Validar solo si todos los campos existen
+                                  if (startDateController.text.isEmpty ||
+                                      startTimeController.text.isEmpty ||
+                                      endDateController.text.isEmpty) {
+                                    return null;
+                                  }
+
+                                  try {
+                                    final start = _parseDateTime(
+                                      startDateController.text,
+                                      startTimeController.text,
+                                    );
+
+                                    final end = _parseDateTime(
+                                      endDateController.text,
+                                      endTimeController.text,
+                                    );
+
+                                    if (!end.isAfter(start)) {
+                                      return "El cierre debe ser posterior al inicio";
+                                    }
+                                  } catch (e) {
+                                    return "Formato inválido";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        _sectionLabel("Resultados"),
+                        _checkboxTile(
+                          value: resultadoPrivado,
+                          title: "Privado",
+                          onChanged: (value) {
+                            setState(() {
+                              resultadoPrivado = value ?? false;
+                              resultadoPublico = !(value ?? false);
+                            });
+                          },
+                        ),
+                        _checkboxTile(
+                          value: resultadoPublico,
+                          title: "Público",
+                          onChanged: (value) {
+                            setState(() {
+                              resultadoPublico = value ?? false;
+                              resultadoPrivado = !(value ?? false);
+                            });
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        Center(
+                          child: ElevatedButton(
+                            key: const Key("createEvaluationButton"),
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) return;
+                              try {
+                                final start = _parseDateTime(
+                                  startDateController.text,
+                                  startTimeController.text,
+                                );
+
+                                final end = _parseDateTime(
+                                  endDateController.text,
+                                  endTimeController.text,
+                                );
+
+                                activityController.name.value =
+                                    nameController.text;
+
+                                activityController.categoryId.value =
+                                    selectedCategory?.id ?? '';
+
+                                activityController.startDate.value = start;
+                                activityController.endDate.value = end;
+
+                                activityController.isPublic.value =
+                                    resultadoPublico;
+                                await activityController.createNewActivity(
+                                  widget.courseId,
+                                );
+                                Navigator.of(context).pop(true);
+                                //return true;
+                              } catch (e) {
+                                Get.snackbar("Error", e.toString());
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4C3F6D),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 22,
+                                vertical: 12,
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Crear actividad",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
