@@ -203,6 +203,34 @@ class EvaluationRemoteDataSourceRoble
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 
+  @override
+  Future<List<Map<String, dynamic>>> getEvaluations(
+    String activityId,
+    String userId,
+  ) async {
+
+    final token = await _getToken();
+
+    final uri = Uri.https(baseUrl, '/database/$contract/read', {
+      "tableName": "evaluation",
+      "activity_id": activityId,
+      "evaluated_id": userId,
+    });
+
+    final response = await httpClient.get(
+      uri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error obteniendo evaluaciones");
+    }
+    logInfo('El problema esta obteniedno las evaluacion?');
+    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
+    return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+  }
+
+
   // =============================
   // GET USER
   // =============================

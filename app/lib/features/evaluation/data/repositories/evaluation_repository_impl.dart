@@ -27,7 +27,7 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
     String activityId,
     String userId,
   ) async {
-    final evaluations = await remote.getEvaluationsByUser(activityId, userId);
+    final evaluations = await remote.getEvaluations(activityId, userId);
 
     List<EvaluationResult> results = [];
 
@@ -51,8 +51,8 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
 
       results.add(
         EvaluationResult(
-          evaluatedUserId: userId,
-          evaluatedUserName: evaluator?["name"] ?? "Desconocido",
+          evaluatorId: evaluatorId,
+          evaluatorName: evaluator?["name"] ?? "Desconocido",
           scoresByCriterion: grouped,
         ),
       );

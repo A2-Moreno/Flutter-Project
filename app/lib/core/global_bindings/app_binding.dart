@@ -7,6 +7,7 @@ import '../../features/groups/binding/groups_binding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/activity/binding/activity_binding.dart';
 import '../../features/evaluation/binding/evaluation_binding.dart';
+import '../../features/evaluation/binding/result_binding.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -19,6 +20,7 @@ class AppBindings extends Bindings {
     GroupDetailBinding().dependencies();
     ActivityBinding().dependencies();
     EvaluationBinding().dependencies();
+    ResultsBinding().dependencies();
     
   }
 }

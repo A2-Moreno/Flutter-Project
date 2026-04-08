@@ -1,16 +1,16 @@
 import './evaluation_details_model.dart';
 
 class EvaluationResult {
-  final String evaluatedUserId;
-  final String evaluatedUserName;
+  final String evaluatorId;
+  final String evaluatorName;
 
   final Map<String, List<double>> scoresByCriterion;
 
   /*final List<EvaluationDetail> details;*/
 
   EvaluationResult({
-    required this.evaluatedUserId,
-    required this.evaluatedUserName,
+    required this.evaluatorId,
+    required this.evaluatorName,
     required this.scoresByCriterion,
     /*required this.details,*/
   });

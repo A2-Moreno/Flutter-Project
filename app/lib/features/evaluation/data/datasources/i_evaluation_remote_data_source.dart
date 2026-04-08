@@ -1,9 +1,5 @@
 abstract class IEvaluationRemoteDataSource {
-
-  Future<bool> hasUserEvaluated(
-    String activityId,
-    String evaluatorId,
-  );
+  Future<bool> hasUserEvaluated(String activityId, String evaluatorId);
 
   Future<void> submitEvaluation(
     String activityId,
@@ -17,9 +13,11 @@ abstract class IEvaluationRemoteDataSource {
     String userId,
   );
 
-  Future<List<Map<String, dynamic>>> getScoresByEvaluation(
-    String evaluationId,
-  );
+  Future<List<Map<String, dynamic>>> getScoresByEvaluation(String evaluationId);
 
+  Future<List<Map<String, dynamic>>> getEvaluations(
+    String activityId,
+    String userId,
+  );
   Future<Map<String, dynamic>?> getUserById(String userId);
 }

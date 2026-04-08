@@ -131,7 +131,7 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              Get.to(() => ResultsPage());
+                              evalController.openResults(widget.activity);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF4C3F6D),
