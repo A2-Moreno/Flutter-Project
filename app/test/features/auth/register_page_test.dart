@@ -62,14 +62,14 @@ void main() {
 
     expect(find.text("Registro"), findsOneWidget);
     expect(find.byType(TextFormField), findsNWidgets(4));
-    expect(find.text("Registrarse"), findsOneWidget);
+    expect(find.byKey(const Key("registerButton")), findsOneWidget);
   });
 
   testWidgets('Muestra errores si campos están vacíos', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.ensureVisible(find.text("Registrarse"));
-    await tester.tap(find.text("Registrarse"));
+    await tester.ensureVisible(find.byKey(const Key("registerButton")));
+    await tester.tap(find.byKey(const Key("registerButton")));
     await tester.pump();
 
     expect(find.text("Ingresa tu nombre"), findsOneWidget);
@@ -81,13 +81,22 @@ void main() {
   testWidgets('Muestra error si email es inválido', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.enterText(find.byType(TextFormField).at(0), "Juan");
-    await tester.enterText(find.byType(TextFormField).at(1), "correo_mal");
-    await tester.enterText(find.byType(TextFormField).at(2), "Password1!");
-    await tester.enterText(find.byType(TextFormField).at(3), "Password1!");
+    await tester.enterText(find.byKey(const Key("registerNameField")), "Juan");
+    await tester.enterText(
+      find.byKey(const Key("registerEmailField")),
+      "correo_mal",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerPasswordField")),
+      "Password1!",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerConfirmPasswordField")),
+      "Password1!",
+    );
 
-    await tester.ensureVisible(find.text("Registrarse"));
-    await tester.tap(find.text("Registrarse"));
+    await tester.ensureVisible(find.byKey(const Key("registerButton")));
+    await tester.tap(find.byKey(const Key("registerButton")));
     await tester.pump();
 
     expect(find.text("Correo inválido"), findsOneWidget);
@@ -96,13 +105,22 @@ void main() {
   testWidgets('Muestra error si contraseña no cumple reglas', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.enterText(find.byType(TextFormField).at(0), "Juan");
-    await tester.enterText(find.byType(TextFormField).at(1), "juan@mail.com");
-    await tester.enterText(find.byType(TextFormField).at(2), "123");
-    await tester.enterText(find.byType(TextFormField).at(3), "123");
+    await tester.enterText(find.byKey(const Key("registerNameField")), "Juan");
+    await tester.enterText(
+      find.byKey(const Key("registerEmailField")),
+      "juan@mail.com",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerPasswordField")),
+      "123",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerConfirmPasswordField")),
+      "123",
+    );
 
-    await tester.ensureVisible(find.text("Registrarse"));
-    await tester.tap(find.text("Registrarse"));
+    await tester.ensureVisible(find.byKey(const Key("registerButton")));
+    await tester.tap(find.byKey(const Key("registerButton")));
     await tester.pump();
 
     expect(find.textContaining("Debe tener"), findsOneWidget);
@@ -111,13 +129,22 @@ void main() {
   testWidgets('Muestra error si contraseñas no coinciden', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.enterText(find.byType(TextFormField).at(0), "Juan");
-    await tester.enterText(find.byType(TextFormField).at(1), "juan@mail.com");
-    await tester.enterText(find.byType(TextFormField).at(2), "Password1!");
-    await tester.enterText(find.byType(TextFormField).at(3), "Otra123!");
+    await tester.enterText(find.byKey(const Key("registerNameField")), "Juan");
+    await tester.enterText(
+      find.byKey(const Key("registerEmailField")),
+      "juan@mail.com",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerPasswordField")),
+      "Password1!",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerConfirmPasswordField")),
+      "Otra123!",
+    );
 
-    await tester.ensureVisible(find.text("Registrarse"));
-    await tester.tap(find.text("Registrarse"));
+    await tester.ensureVisible(find.byKey(const Key("registerButton")));
+    await tester.tap(find.byKey(const Key("registerButton")));
     await tester.pump();
 
     expect(find.text("Las contraseñas no coinciden"), findsOneWidget);
@@ -126,13 +153,22 @@ void main() {
   testWidgets('Llama signUp cuando datos son correctos', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.enterText(find.byType(TextFormField).at(0), "Juan");
-    await tester.enterText(find.byType(TextFormField).at(1), "juan@mail.com");
-    await tester.enterText(find.byType(TextFormField).at(2), "Password1!");
-    await tester.enterText(find.byType(TextFormField).at(3), "Password1!");
+    await tester.enterText(find.byKey(const Key("registerNameField")), "Juan");
+    await tester.enterText(
+      find.byKey(const Key("registerEmailField")),
+      "juan@mail.com",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerPasswordField")),
+      "Password1!",
+    );
+    await tester.enterText(
+      find.byKey(const Key("registerConfirmPasswordField")),
+      "Password1!",
+    );
 
-    await tester.ensureVisible(find.text("Registrarse"));
-    await tester.tap(find.text("Registrarse"));
+    await tester.ensureVisible(find.byKey(const Key("registerButton")));
+    await tester.tap(find.byKey(const Key("registerButton")));
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -144,8 +180,8 @@ void main() {
   testWidgets('Cambia a login al presionar botón', (tester) async {
     await tester.pumpWidget(const GetMaterialApp(home: RegisterPage()));
 
-    await tester.ensureVisible(find.text("¿Ya tienes una cuenta?"));
-    await tester.tap(find.text("¿Ya tienes una cuenta?"));
+    await tester.ensureVisible(find.byKey(const Key("goToLoginButton")));
+    await tester.tap(find.byKey(const Key("goToLoginButton")));
     await tester.pump();
 
     expect(controller.signingUp.value, false);

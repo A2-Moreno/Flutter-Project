@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/widgets/header.dart';
@@ -98,7 +99,6 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
 
                       const SizedBox(height: 8),
 
-                      // 🔹 BOTÓN SOLO EN MODO EVALUACIÓN
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -163,6 +163,38 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
         ),
       ),
     );
+  }
+}
+
+class GradeInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+
+    // Permitir borrar el contenido
+    if (text.isEmpty) {
+      return newValue;
+    }
+
+    // Solo permite:
+    // 1, 1.0, 1.5, 2, 2.3, ..., 5, 5.0
+    // Máximo un decimal
+    final regex = RegExp(r'^[1-5](\.\d?)?$');
+
+    if (!regex.hasMatch(text)) {
+      return oldValue;
+    }
+
+    final value = double.tryParse(text);
+
+    if (value == null || value < 1.0 || value > 5.0) {
+      return oldValue;
+    }
+
+    return newValue;
   }
 }
 
@@ -254,7 +286,6 @@ class _MemberGradeCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         child: Obx(() {
-                          // 🔹 MODO RESULTADOS
                           if (evalController.isResultMode.value) {
                             final myGrade = evalController
                                 .mySubmittedGrades[evaluatedUserId]?[criterion];
@@ -271,18 +302,20 @@ class _MemberGradeCard extends StatelessWidget {
                             );
                           }
 
-                          // 🔹 MODO EVALUACIÓN
                           return TextFormField(
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
+                            inputFormatters: [
+                              GradeInputFormatter(),
+                            ],
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Color(0xFF4C3F6D),
                               fontSize: 12,
                             ),
                             decoration: const InputDecoration(
-                              hintText: "0.0",
+                              hintText: "1.0",
                               hintStyle: TextStyle(
                                 color: Color(0xFF7A7090),
                                 fontSize: 12,
@@ -292,13 +325,19 @@ class _MemberGradeCard extends StatelessWidget {
                               contentPadding: EdgeInsets.symmetric(vertical: 8),
                             ),
                             onChanged: (value) {
-                              final parsed = double.tryParse(value) ?? 0;
+                              if (value.isEmpty) return;
 
-                              evalController.setGrade(
-                                evaluatedUserId,
-                                criterion,
-                                parsed,
-                              );
+                              final parsed = double.tryParse(value);
+
+                              if (parsed != null &&
+                                  parsed >= 1.0 &&
+                                  parsed <= 5.0) {
+                                evalController.setGrade(
+                                  evaluatedUserId,
+                                  criterion,
+                                  parsed,
+                                );
+                              }
                             },
                           );
                         }),
