@@ -102,16 +102,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Image.network(
-                                          "https://picsum.photos/500/500",
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Expanded(
+                                    children: [Expanded(
                                         flex: 3,
                                         child: Padding(
                                           padding: const EdgeInsets.all(16),

@@ -23,6 +23,8 @@ import 'features/teacher/data/datasources/i_course_create_source.dart';
 import 'core/themes/app_theme.dart';
 import './central.dart';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'core/global_bindings/app_binding.dart';
 
 void main() async {
@@ -52,6 +54,9 @@ void main() async {
   Get.lazyPut<ICourseCreateRemoteDataSource>(() => CourseRemoteDataSource());
   Get.put<ICourseCreateRepository>(CourseCreateRepository(Get.find()));
   Get.put(CreateController(Get.find()));
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es');
 
   runApp(const MyApp());
 }
