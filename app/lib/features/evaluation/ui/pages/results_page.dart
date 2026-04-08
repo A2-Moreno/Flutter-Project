@@ -82,7 +82,6 @@ class _ResultsPageState extends State<ResultsPage> {
                           ),
                         ),
 
-                      // 🔹 RESULTADOS DE OTROS (SOLO SI ES PUBLICA)
                       if (widget.activity.isPublic)
                         ...others.map((item) {
                           return Padding(

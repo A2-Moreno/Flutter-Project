@@ -45,8 +45,6 @@ class GroupDetailRemoteDataSource
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', query);
 
-    print("READ -> $table | filters: $filters");
-
     final response = await httpClient.get(
       uri,
       headers: {"Authorization": "Bearer $token"},
@@ -55,12 +53,8 @@ class GroupDetailRemoteDataSource
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
-      print("RESPONSE [$table]: ${data.length}");
-
       return data;
     }
-
-    print("ERROR [$table]: ${response.body}");
 
     throw Exception("Error reading $table");
   }

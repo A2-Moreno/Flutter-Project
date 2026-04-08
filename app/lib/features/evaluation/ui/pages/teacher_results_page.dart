@@ -55,14 +55,12 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                   ),
                 ),
                 child: Obx(() {
-                  // 🔹 LOADING
                   if (controller.isLoading.value) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  // 🔹 ERROR
                   if (controller.error.isNotEmpty) {
                     return Center(
                       child: Text(controller.error.value),
@@ -71,14 +69,13 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
 
                   final items = controller.studentsResults;
 
-                  // 🔹 EMPTY STATE
                   if (items.isEmpty) {
                     return const Center(
                       child: Text("No hay resultados disponibles"),
                     );
                   }
 
-                  // 🔥 OPCIONAL PRO: ordenar por promedio
+                  
                   final sorted = [...items];
                   sorted.sort((a, b) =>
                       double.parse(b["average"])
@@ -95,7 +92,7 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                         child: ResultTableCard(
                           name: item["name"],
                           average: item["average"],
-                          highlighted: index == 0, // 🥇 mejor estudiante
+                          highlighted: index == 0, 
                           criteria: List<Map<String, String>>.from(
                             item["criteria"],
                           ),

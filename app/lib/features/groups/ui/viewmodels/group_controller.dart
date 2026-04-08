@@ -30,8 +30,6 @@ class GroupController extends GetxController {
 
   Future<void> loadGroups(String activityId) async {
     try {
-      print("INICIANDO CARGA DE GRUPOS");
-      print("CategoryId: $activityId");
 
       isLoading.value = true;
       error.value = "";
@@ -40,39 +38,23 @@ class GroupController extends GetxController {
       final role = await prefs.getString("rol");
       final userId = await prefs.getString("userId");
 
-      print("Role: $role");
-      print("UserId: $userId");
-
-      logInfo("Role: $role");
-      logInfo("UserId: $userId");
-
       if (role == "profesor") {
-        print("MODO PROFESOR");
+        logInfo("MODO PROFESOR");
 
         isTeacher.value = true;
         final result = await getGroupsByCategory.execute(activityId);
 
-        print(" TOTAL GRUPOS: ${result.length}");
-
-        for (var group in result) {
-          print("\n📦 Grupo: ${group.name} (ID: ${group.id})");
-
-          for (var member in group.members) {
-            print(" - 👤 ${member.name} | ${member.email}");
-          }
-        }
+        logInfo(" TOTAL GRUPOS: ${result.length}");
 
         groups.assignAll(result);
       } else {
-        print("MODO ESTUDIANTE");
+        logInfo("MODO ESTUDIANTE");
 
         isTeacher.value = false;
 
         if (userId == null) {
           throw Exception("UserId no encontrado");
         }
-        print('el categrryId que llega aqui es:  $activityId');
-        print('el USERId que llega aqui es:  $userId');
         final result = await getMyGroup.execute(activityId, userId);
 
         if (result != null) {
@@ -80,7 +62,6 @@ class GroupController extends GetxController {
         }
       }
 
-      print("CARGA COMPLETADA");
     } catch (e) {
       print("ERROR EN LOAD GROUPS: $e");
       logError("Error loading groups: $e");

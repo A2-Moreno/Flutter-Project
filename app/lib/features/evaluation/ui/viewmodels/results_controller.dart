@@ -27,7 +27,6 @@ class ResultsController extends GetxController {
 
     final raw = await getResultsUsecase.execute(activity.id, userId);
 
-    // 🔹 SI NO HAY RESULTADOS → SALIDA SEGURA
     if (raw.isEmpty) {
       mySummary.value = {
         "name": "Tu resultado",
@@ -47,7 +46,6 @@ class ResultsController extends GetxController {
       });
     }
 
-    // 🔹 CRITERIOS (PROTEGIDO)
     final criteriaList = global.entries.map((e) {
       if (e.value.isEmpty) {
         return {
@@ -65,7 +63,6 @@ class ResultsController extends GetxController {
       };
     }).toList();
 
-    // 🔹 PROMEDIO GLOBAL (PROTEGIDO)
     final allScores = global.values.expand((e) => e).toList();
 
     final totalAvg = allScores.isEmpty
@@ -78,7 +75,6 @@ class ResultsController extends GetxController {
       "criteria": criteriaList,
     };
 
-    // 🔹 RESULTADOS DE OTROS (PROTEGIDO)
     final List<Map<String, dynamic>> others = [];
 
     for (final r in raw) {

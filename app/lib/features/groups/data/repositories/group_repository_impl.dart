@@ -27,7 +27,6 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   // =============================
   @override
   Future<List<Group>> getGroupsByCategory(String activityId) async {
-
     final categoryId = await _getCategoryIdFromActivity(activityId);
 
     final groups = await remote.read(
@@ -35,27 +34,53 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
       filters: {"category_id": categoryId},
     );
 
+    final membersResponses = await Future.wait(
+      groups.map((g) {
+        return remote.read(
+          table: "group_members",
+          filters: {"group_id": g["_id"]},
+        );
+      }),
+    );
+
+    // Cache
+    final Map<String, Map<String, dynamic>> usersCache = {};
+
+    final Set<String> userIds = {};
+
+    for (final members in membersResponses) {
+      for (final m in members) {
+        userIds.add(m["estudiante_id"]);
+      }
+    }
+
+    // Traer usuarios una soloa vez (con cache)
+    await Future.wait(
+      userIds.map((id) async {
+        final userData = await remote.read(
+          table: "Users",
+          filters: {"userId": id},
+        );
+
+        if (userData.isNotEmpty) {
+          usersCache[id] = userData.first;
+        }
+      }),
+    );
+
     List<Group> result = [];
 
-    for (final group in groups) {
-      final groupId = group["_id"];
-
-      final membersData = await remote.read(
-        table: "group_members",
-        filters: {"group_id": groupId},
-      );
+    for (int i = 0; i < groups.length; i++) {
+      final group = groups[i];
+      final membersData = membersResponses[i];
 
       List<GroupMember> members = [];
 
       for (final member in membersData) {
-        final userData = await remote.read(
-          table: "Users",
-          filters: {"userId": member["estudiante_id"]},
-        );
+        final userId = member["estudiante_id"];
+        final user = usersCache[userId];
 
-        if (userData.isNotEmpty) {
-          final user = userData.first;
-
+        if (user != null) {
           members.add(
             GroupMember(
               userId: user["userId"],
@@ -68,7 +93,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
 
       result.add(
         Group(
-          id: groupId,
+          id: group["_id"],
           name: group["name"],
           code: group["code"],
           members: members,
@@ -84,7 +109,6 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   // =============================
   @override
   Future<Group?> getMyGroup(String activityId, String userId) async {
-
     final categoryId = await _getCategoryIdFromActivity(activityId);
 
     final memberships = await remote.read(
@@ -124,13 +148,13 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
         if (userData.isNotEmpty) {
           final user = userData.first;
           if (userId != user["userId"]) {
-          members.add(
-            GroupMember(
-              userId: user["userId"],
-              name: user["name"],
-              email: user["email"],
-            ),
-          );
+            members.add(
+              GroupMember(
+                userId: user["userId"],
+                name: user["name"],
+                email: user["email"],
+              ),
+            );
           }
         }
       }

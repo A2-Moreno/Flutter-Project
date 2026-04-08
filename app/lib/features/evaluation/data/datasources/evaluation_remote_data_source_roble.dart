@@ -170,8 +170,7 @@ class EvaluationRemoteDataSourceRoble
     if (response.statusCode != 200) {
       throw Exception("Error obteniendo evaluaciones");
     }
-    logInfo('El problema esta obteniedno las evaluacion?');
-    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
+
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 
@@ -198,8 +197,6 @@ class EvaluationRemoteDataSourceRoble
     if (response.statusCode != 200) {
       throw Exception("Error obteniendo scores");
     }
-    logInfo('El problema esta obteniedno las calificaciones?');
-    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 
@@ -225,8 +222,6 @@ class EvaluationRemoteDataSourceRoble
     if (response.statusCode != 200) {
       throw Exception("Error obteniendo evaluaciones");
     }
-    logInfo('El problema esta obteniedno las evaluacion?');
-    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 

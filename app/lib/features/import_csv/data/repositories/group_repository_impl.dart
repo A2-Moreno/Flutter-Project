@@ -10,7 +10,6 @@ class GroupCsvRepositoryImpl implements IGroupCsvRepository {
 
   @override
   Future<List<Group>> importGroups() {
-    print('estamos en el data repository');
     return parser.parseCsv();
   }
 }

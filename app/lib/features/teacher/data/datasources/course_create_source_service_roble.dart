@@ -50,9 +50,6 @@ class CourseRemoteDataSource implements ICourseCreateRemoteDataSource {
       body: body,
     );
 
-    print(response.statusCode);
-    print(response.body);
-
     if (response.statusCode != 201) {
       throw Exception("Error creating course: ${response.body}");
     }

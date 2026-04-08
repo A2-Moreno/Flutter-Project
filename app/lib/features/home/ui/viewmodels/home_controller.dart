@@ -19,7 +19,6 @@ class HomeController extends GetxController {
 
     ever(auth.logged, (isLogged) {
       if (isLogged) {
-        print("🔄 Recargando cursos...");
         loadCourses();
       } else {
         courses.clear();

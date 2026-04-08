@@ -33,7 +33,6 @@ class TeacherResultsController extends GetxController {
         return;
       }
 
-      // 🔥 1. LLAMADAS EN PARALELO (CLAVE)
       final futures = members.map((member) async {
         return await _buildStudentResult(
           activity.id,
@@ -44,7 +43,6 @@ class TeacherResultsController extends GetxController {
 
       final results = await Future.wait(futures);
 
-      // 🔥 2. FILTRAR NULOS (usuarios sin evaluaciones)
       studentsResults.assignAll(
         results.whereType<Map<String, dynamic>>().toList(),
       );
@@ -69,12 +67,12 @@ class TeacherResultsController extends GetxController {
           await getResultsUsecase.execute(activityId, userId);
 
       if (evaluations.isEmpty) {
-        return null; // 🔥 ignorar estudiantes sin data
+        return null; 
       }
 
       final Map<String, List<double>> grouped = {};
 
-      // 🔹 agrupar scores
+      // agrupar scores
       for (final eval in evaluations) {
         eval.scoresByCriterion.forEach((criterion, scores) {
           grouped.putIfAbsent(criterion, () => []);
@@ -82,7 +80,7 @@ class TeacherResultsController extends GetxController {
         });
       }
 
-      // 🔹 construir lista por criterio
+      // construir lista por criterio
       final criteriaList = grouped.entries.map((e) {
         final avg = e.value.reduce((a, b) => a + b) / e.value.length;
 
@@ -92,7 +90,6 @@ class TeacherResultsController extends GetxController {
         };
       }).toList();
 
-      // 🔹 promedio general
       final allScores = grouped.values.expand((e) => e).toList();
 
       final totalAvg =
