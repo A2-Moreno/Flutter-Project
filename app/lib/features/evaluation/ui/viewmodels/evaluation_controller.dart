@@ -5,7 +5,8 @@ import '../../domain/usecases/submit_evaluation_usecase.dart';
 import '../../domain/usecases/has_user_evaluated_usecase.dart';
 import '../../domain/usecases/get_evaluation_results_usecase.dart';
 import '../../domain/models/evaluation_result_model.dart';
-
+import '../../domain/usecases/get_my_evaluations_usecase.dart';
+import '../../domain/usecases/get_scores_evaluation_usecase.dart';
 import '../../../../core/i_local_preferences.dart';
 import '../../../groups/ui/viewmodels/group_controller.dart';
 import '../../../activity/domain/models/activity_model.dart';
@@ -14,11 +15,15 @@ class EvaluationController extends GetxController {
   final SubmitEvaluation submitEvaluationUsecase;
   final HasUserEvaluated hasUserEvaluatedUsecase;
   final GetEvaluationResults getResultsUsecase;
+  final GetMyEvaluations getMyEvaluationsUsecase;
+  final GetScoresByEvaluation getScoresByEvaluationUsecase;
 
   EvaluationController(
     this.submitEvaluationUsecase,
     this.hasUserEvaluatedUsecase,
     this.getResultsUsecase,
+    this.getMyEvaluationsUsecase,
+    this.getScoresByEvaluationUsecase,
   );
 
   // =============================
@@ -28,6 +33,9 @@ class EvaluationController extends GetxController {
   final isLoading = false.obs;
   final error = "".obs;
   late Activity activity;
+
+  /// evaluatedUserId -> (criterion -> score)
+  final mySubmittedGrades = <String, Map<String, double>>{}.obs;
 
   final isEvaluationMode = false.obs;
   final isResultMode = false.obs;
@@ -81,6 +89,7 @@ class EvaluationController extends GetxController {
         isResultMode.value = true;
 
         await loadResults(activity);
+        await loadMyGrades(activity.id);
       }
     } catch (e) {
       logError("Error init evaluation: $e");
@@ -130,6 +139,7 @@ class EvaluationController extends GetxController {
         userId,
         grades,
       );
+      mySubmittedGrades.assignAll(grades);
 
       Get.snackbar("Éxito", "Evaluación enviada");
 
@@ -174,6 +184,52 @@ class EvaluationController extends GetxController {
       results.assignAll(data);
     } catch (e) {
       logError("Error loading results: $e");
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMyGrades(String activityId) async {
+    logInfo('ActivityId recibido esss:  $activityId');
+    try {
+      isLoading.value = true;
+
+      final userId = await prefs.getString("userId");
+
+      if (userId == null) {
+        throw Exception("UserId no encontrado");
+      }
+
+      final evaluations = await getMyEvaluationsUsecase.execute(
+        activityId,
+        userId,
+      );
+      logInfo('Las evaluaciones obtenidas sonnnn:  $evaluations');
+
+      final Map<String, Map<String, double>> result = {};
+
+      for (final eval in evaluations) {
+        final evaluatedId = eval["evaluated_id"];
+        final evaluationId = eval["_id"];
+
+        final scores = await getScoresByEvaluationUsecase.execute(evaluationId);
+        logInfo('Las calificaciones obtenidas sonnnn:  $scores');
+
+        result[evaluatedId] = {};
+
+        for (final s in scores) {
+          final criterion = s["criterion"];
+          final score = (s["score"] as num).toDouble();
+
+          result[evaluatedId]![criterion] = score;
+        }
+      }
+
+      // 🔹 GUARDAR EN ESTADO
+      mySubmittedGrades.assignAll(result);
+    } catch (e) {
+      logError("Error loading my grades: $e");
       error.value = e.toString();
     } finally {
       isLoading.value = false;

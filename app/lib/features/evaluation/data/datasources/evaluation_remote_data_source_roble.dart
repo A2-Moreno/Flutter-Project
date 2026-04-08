@@ -92,7 +92,7 @@ class EvaluationRemoteDataSourceRoble
         "tableName": "evaluation",
         "records": [
           {
-            "evaluation_id": evaluationId,
+            "_id": evaluationId,
             "activity_id": activityId,
             "group_id": groupId,
             "evaluator_id": evaluatorId,
@@ -159,7 +159,7 @@ class EvaluationRemoteDataSourceRoble
     final uri = Uri.https(baseUrl, '/database/$contract/read', {
       "tableName": "evaluation",
       "activity_id": activityId,
-      "evaluated_id": userId,
+      "evaluator_id": userId,
     });
 
     final response = await httpClient.get(
@@ -170,7 +170,8 @@ class EvaluationRemoteDataSourceRoble
     if (response.statusCode != 200) {
       throw Exception("Error obteniendo evaluaciones");
     }
-
+    logInfo('El problema esta obteniedno las evaluacion?');
+    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 
@@ -197,7 +198,8 @@ class EvaluationRemoteDataSourceRoble
     if (response.statusCode != 200) {
       throw Exception("Error obteniendo scores");
     }
-
+    logInfo('El problema esta obteniedno las calificaciones?');
+    logInfo(List<Map<String, dynamic>>.from(jsonDecode(response.body)));
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 

@@ -3,16 +3,12 @@ import '../../domain/repositories/i_evaluation_repository.dart';
 import '../datasources/i_evaluation_remote_data_source.dart';
 
 class EvaluationRepositoryImpl implements IEvaluationRepository {
-
   final IEvaluationRemoteDataSource remote;
 
   EvaluationRepositoryImpl(this.remote);
 
   @override
-  Future<bool> hasUserEvaluated(
-    String activityId,
-    String evaluatorId,
-  ) {
+  Future<bool> hasUserEvaluated(String activityId, String evaluatorId) {
     return remote.hasUserEvaluated(activityId, evaluatorId);
   }
 
@@ -23,12 +19,7 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
     String evaluatorId,
     Map<String, Map<String, double>> data,
   ) {
-    return remote.submitEvaluation(
-      activityId,
-      groupId,
-      evaluatorId,
-      data,
-    );
+    return remote.submitEvaluation(activityId, groupId, evaluatorId, data);
   }
 
   @override
@@ -36,22 +27,17 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
     String activityId,
     String userId,
   ) async {
-
-    final evaluations =
-        await remote.getEvaluationsByUser(activityId, userId);
+    final evaluations = await remote.getEvaluationsByUser(activityId, userId);
 
     List<EvaluationResult> results = [];
 
     for (final eval in evaluations) {
-
       final evaluationId = eval["_id"];
       final evaluatorId = eval["evaluator_id"];
 
-      final scores =
-          await remote.getScoresByEvaluation(evaluationId);
+      final scores = await remote.getScoresByEvaluation(evaluationId);
 
-      final evaluator =
-          await remote.getUserById(evaluatorId);
+      final evaluator = await remote.getUserById(evaluatorId);
 
       final Map<String, List<double>> grouped = {};
 
@@ -73,5 +59,20 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
     }
 
     return results;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getMyEvaluations(
+    String activityId,
+    String userId,
+  ) {
+    return remote.getEvaluationsByUser(activityId, userId);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getScoresByEvaluation(
+    String evaluationId,
+  ) {
+    return remote.getScoresByEvaluation(evaluationId);
   }
 }

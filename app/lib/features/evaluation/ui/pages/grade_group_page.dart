@@ -256,10 +256,13 @@ class _MemberGradeCard extends StatelessWidget {
                         child: Obx(() {
                           // 🔹 MODO RESULTADOS
                           if (evalController.isResultMode.value) {
-                            final avg = evalController.getAverage(criterion);
+                            final myGrade = evalController
+                                .mySubmittedGrades[evaluatedUserId]?[criterion];
 
                             return Text(
-                              avg.toStringAsFixed(1),
+                              myGrade != null
+                                  ? myGrade.toStringAsFixed(1)
+                                  : "-",
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 color: Color(0xFF4C3F6D),
