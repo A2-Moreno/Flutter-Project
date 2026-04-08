@@ -1,3 +1,4 @@
+import 'package:app/features/evaluation/binding/teacher_results_binding.dart';
 import 'package:get/get.dart';
 
 import '../../features/import_csv/binding/import_csv_binding.dart';
@@ -21,6 +22,7 @@ class AppBindings extends Bindings {
     ActivityBinding().dependencies();
     EvaluationBinding().dependencies();
     ResultsBinding().dependencies();
+    TeacherResultsBinding().dependencies();
     
   }
 }

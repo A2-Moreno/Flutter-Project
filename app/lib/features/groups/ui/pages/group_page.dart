@@ -108,7 +108,10 @@ class _GroupScreenState extends State<GroupScreen> {
                               padding: const EdgeInsets.only(bottom: 20),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(18),
-                                onTap: () => controller.openGroup(group.id),
+                                onTap: () => controller.openGroup(
+                                  widget.activity,
+                                  group,
+                                ),
                                 child: Container(
                                   width: screenWidth * 0.9,
                                   height: screenWidth * 0.3,
@@ -169,11 +172,12 @@ class _GroupScreenState extends State<GroupScreen> {
                         );
                       }),
                     ),
-
+                    /*
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 40),
                       child: Center(
                         child: Column(
+                          
                           children: [
                             const Text(
                               "Media de la evaluación",
@@ -197,6 +201,7 @@ class _GroupScreenState extends State<GroupScreen> {
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8),
@@ -222,6 +227,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                       ),
                                     ),
                                   ),
+                                  
                                   Text(
                                     "Promedio de todas",
                                     style: const TextStyle(
@@ -238,13 +244,16 @@ class _GroupScreenState extends State<GroupScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  
                                 ],
                               ),
                             ),
                           ],
+                          
                         ),
+                        
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),

@@ -1,3 +1,4 @@
+import 'package:app/features/activity/domain/models/activity_model.dart';
 import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
 
@@ -7,6 +8,7 @@ import '../../domain/use_cases/get_groups_by_category_usecase.dart';
 import '../../domain/use_cases/get_my_group_usecase.dart';
 import '../../domain/use_cases/get_all_my_groups.dart';
 import '../../../../core/i_local_preferences.dart';
+import '../../../evaluation/ui/pages/teacher_results_page.dart';
 
 class GroupController extends GetxController {
   final GetGroupsByCategory getGroupsByCategory;
@@ -122,7 +124,7 @@ class GroupController extends GetxController {
     await loadGroups(categoryId);
   }
 
-  void openGroup(String groupID) {
-    //Get.to(() => GroupPage(groupID: groupID));
+  void openGroup(Activity activity, Group group) {
+    Get.to(() => TeacherResultsPage(activity: activity, group: group));
   }
 }

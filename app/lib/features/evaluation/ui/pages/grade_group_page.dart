@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../../../../core/widgets/header.dart';
 import '../../../groups/ui/viewmodels/group_controller.dart';
 import '../../../activity/domain/models/activity_model.dart';
-import 'results_page.dart';
 import '../viewmodels/evaluation_controller.dart';
 
 class GradeGroupPage extends StatefulWidget {

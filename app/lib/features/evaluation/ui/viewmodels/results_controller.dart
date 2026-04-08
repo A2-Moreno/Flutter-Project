@@ -18,25 +18,82 @@ class ResultsController extends GetxController {
   final publicResults = <Map<String, dynamic>>[].obs;
 
   Future<void> buildResults(Activity activity) async {
-    try {
-      isLoading.value = true;
+  try {
+    isLoading.value = true;
+    error.value = "";
 
-      final userId = await prefs.getString("userId");
-      if (userId == null) throw Exception("UserId no encontrado");
+    final userId = await prefs.getString("userId");
+    if (userId == null) throw Exception("UserId no encontrado");
 
-      final raw = await getResultsUsecase.execute(activity.id, userId);
+    final raw = await getResultsUsecase.execute(activity.id, userId);
 
-      final Map<String, List<double>> global = {};
+    // 🔹 SI NO HAY RESULTADOS → SALIDA SEGURA
+    if (raw.isEmpty) {
+      mySummary.value = {
+        "name": "Tu resultado",
+        "average": "0.0",
+        "criteria": [],
+      };
+      publicResults.clear();
+      return;
+    }
 
-      for (final r in raw) {
-        r.scoresByCriterion.forEach((criterion, scores) {
-          global.putIfAbsent(criterion, () => []);
-          global[criterion]!.addAll(scores);
-        });
+    final Map<String, List<double>> global = {};
+
+    for (final r in raw) {
+      r.scoresByCriterion.forEach((criterion, scores) {
+        global.putIfAbsent(criterion, () => []);
+        global[criterion]!.addAll(scores);
+      });
+    }
+
+    // 🔹 CRITERIOS (PROTEGIDO)
+    final criteriaList = global.entries.map((e) {
+      if (e.value.isEmpty) {
+        return {
+          "label": e.key,
+          "score": "0.0",
+        };
       }
 
-      final criteriaList = global.entries.map((e) {
-        final avg = e.value.reduce((a, b) => a + b) / e.value.length;
+      final avg =
+          e.value.reduce((a, b) => a + b) / e.value.length;
+
+      return {
+        "label": e.key,
+        "score": avg.toStringAsFixed(1),
+      };
+    }).toList();
+
+    // 🔹 PROMEDIO GLOBAL (PROTEGIDO)
+    final allScores = global.values.expand((e) => e).toList();
+
+    final totalAvg = allScores.isEmpty
+        ? 0.0
+        : allScores.reduce((a, b) => a + b) / allScores.length;
+
+    mySummary.value = {
+      "name": "Tu resultado",
+      "average": totalAvg.toStringAsFixed(1),
+      "criteria": criteriaList,
+    };
+
+    // 🔹 RESULTADOS DE OTROS (PROTEGIDO)
+    final List<Map<String, dynamic>> others = [];
+
+    for (final r in raw) {
+      if (r.scoresByCriterion.isEmpty) continue;
+
+      final list = r.scoresByCriterion.entries.map((e) {
+        if (e.value.isEmpty) {
+          return {
+            "label": e.key,
+            "score": "0.0",
+          };
+        }
+
+        final avg =
+            e.value.reduce((a, b) => a + b) / e.value.length;
 
         return {
           "label": e.key,
@@ -44,45 +101,27 @@ class ResultsController extends GetxController {
         };
       }).toList();
 
-      final totalAvg =
-          global.values.expand((e) => e).reduce((a, b) => a + b) /
-          global.values.expand((e) => e).length;
+      if (list.isEmpty) continue;
 
-      mySummary.value = {
-        "name": "Tu resultado",
-        "average": totalAvg.toStringAsFixed(1),
-        "criteria": criteriaList,
-      };
+      final total = list.isEmpty
+          ? 0.0
+          : list
+                  .map((e) => double.tryParse(e["score"] ?? "0") ?? 0.0)
+                  .reduce((a, b) => a + b) /
+              list.length;
 
-      final List<Map<String, dynamic>> others = [];
-
-      for (final r in raw) {
-        final list = r.scoresByCriterion.entries.map((e) {
-          final avg =
-              e.value.reduce((a, b) => a + b) / e.value.length;
-
-          return {
-            "label": e.key,
-            "score": avg.toStringAsFixed(1),
-          };
-        }).toList();
-
-        final total =
-            list.map((e) => double.parse(e["score"]!)).reduce((a, b) => a + b) /
-            list.length;
-
-        others.add({
-          "name": r.evaluatorName,
-          "average": total.toStringAsFixed(1),
-          "criteria": list,
-        });
-      }
-
-      publicResults.assignAll(others);
-    } catch (e) {
-      error.value = e.toString();
-    } finally {
-      isLoading.value = false;
+      others.add({
+        "name": r.evaluatorName,
+        "average": total.toStringAsFixed(1),
+        "criteria": list,
+      });
     }
+
+    publicResults.assignAll(others);
+  } catch (e) {
+    error.value = e.toString();
+  } finally {
+    isLoading.value = false;
   }
+}
 }

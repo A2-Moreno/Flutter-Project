@@ -30,9 +30,7 @@ class _ResultsPageState extends State<ResultsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: "Resultados",
-            ),
+            const AppHeader(title: "Resultados"),
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -46,21 +44,28 @@ class _ResultsPageState extends State<ResultsPage> {
                 ),
                 child: Obx(() {
                   if (controller.isLoading.value) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (controller.error.isNotEmpty) {
-                    return Center(
-                      child: Text(controller.error.value),
-                    );
+                    return Center(child: Text(controller.error.value));
                   }
 
                   final my = controller.mySummary.value;
                   final others = controller.publicResults;
-                  
 
+                  if ((my == null || (my["criteria"] as List).isEmpty) &&
+                      others.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "Aún no hay resultados disponibles",
+                        style: TextStyle(
+                          color: Color(0xFF7A7090),
+                          fontSize: 14,
+                        ),
+                      ),
+                    );
+                  }
                   return ListView(
                     children: [
                       // 🔹 TU RESULTADO (SIEMPRE)
@@ -176,10 +181,7 @@ class ResultTableCard extends StatelessWidget {
                   border: Border(
                     bottom: isLast
                         ? BorderSide.none
-                        : const BorderSide(
-                            color: Color(0xFFD3CBE3),
-                            width: 1,
-                          ),
+                        : const BorderSide(color: Color(0xFFD3CBE3), width: 1),
                   ),
                 ),
                 child: Row(
