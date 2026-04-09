@@ -120,73 +120,77 @@ class _CourseScreenState extends State<CourseScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
 
-                    Obx(() {
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () => showAvailable.value = true,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: showAvailable.value
-                                      ? const Color(0xFF4C3F6D)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: const Color(0xFF4C3F6D),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      child: Obx(() {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => showAvailable.value = true,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
                                   ),
-                                ),
-                                child: Text(
-                                  "Disponibles",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  decoration: BoxDecoration(
                                     color: showAvailable.value
-                                        ? Colors.white
-                                        : const Color(0xFF4C3F6D),
-                                    fontWeight: FontWeight.bold,
+                                        ? const Color(0xFF4C3F6D)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: const Color(0xFF4C3F6D),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Disponibles",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: showAvailable.value
+                                          ? Colors.white
+                                          : const Color(0xFF4C3F6D),
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () => showAvailable.value = false,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: !showAvailable.value
-                                      ? const Color(0xFF4C3F6D)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: const Color(0xFF4C3F6D),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => showAvailable.value = false,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
                                   ),
-                                ),
-                                child: Text(
-                                  "Expiradas",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  decoration: BoxDecoration(
                                     color: !showAvailable.value
-                                        ? Colors.white
-                                        : const Color(0xFF4C3F6D),
-                                    fontWeight: FontWeight.bold,
+                                        ? const Color(0xFF4C3F6D)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: const Color(0xFF4C3F6D),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Finalizadas",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: !showAvailable.value
+                                          ? Colors.white
+                                          : const Color(0xFF4C3F6D),
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                          ],
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 25),
 
                     Expanded(
                       child: Obx(() {
