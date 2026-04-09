@@ -405,6 +405,14 @@ class _CreateEvaluationPageState extends State<CreateEvaluationPage> {
 
                                   return null;
                                 },
+                                suffixIcon: IconButton(
+                                  onPressed: () => _pickTime(endTimeController),
+                                  icon: const Icon(
+                                    Icons.access_time,
+                                    color: Color(0xFF4C3F6D),
+                                    size: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

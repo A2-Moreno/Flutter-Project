@@ -12,7 +12,6 @@ class HomeScreen extends StatelessWidget {
   );*/
 
   final HomeController controller = Get.find();
-  
 
   final AuthenticationController authController = Get.find();
 
@@ -36,10 +35,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () => authController.logOut(),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                    icon: const Icon(
-                      Icons.exit_to_app,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.exit_to_app, color: Colors.white),
                   ),
                 ),
               ),
@@ -47,6 +43,7 @@ class HomeScreen extends StatelessWidget {
 
             Expanded(
               child: Container(
+                width: double.infinity, // Asegura que ocupe todo el ancho
                 decoration: const BoxDecoration(
                   color: Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.only(
@@ -54,118 +51,138 @@ class HomeScreen extends StatelessWidget {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: Stack(
+                child: Column(
+                  // CAMBIO: Usamos Column en lugar de Stack para apilar verticalmente
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Obx(() {
-                      if (controller.courses.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "No tienes cursos inscritos",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        );
-                      }
+                    // TÍTULO "Tus cursos"
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
+                      child: Text(
+                        "Tus cursos",
+                        style: const TextStyle(
+                          color: Color(
+                            0xFF4C3F6D,
+                          ), // CAMBIO: Color oscuro para que se vea sobre fondo blanco
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
 
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 24),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(18, 0, 18, 100),
-                          itemCount: controller.courses.length,
-                          itemBuilder: (context, index) {
-                            final course = controller.courses[index];
+                    // LISTA DE CURSOS
+                    Expanded(
+                      child: Stack(
+                        // Mantenemos un Stack aquí solo para el botón flotante
+                        children: [
+                          Obx(() {
+                            if (controller.courses.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  "No tienes cursos inscritos",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              );
+                            }
 
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(18),
-                                onTap: () => controller.abrirCurso(course),
-                                child: Container(
-                                  width: screenWidth * 0.9,
-                                  height: screenWidth * 0.25,
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFFFFF),
+                            return ListView.builder(
+                              // Quitamos el top padding exagerado porque ya tenemos el título arriba
+                              padding: const EdgeInsets.fromLTRB(
+                                18,
+                                0,
+                                18,
+                                100,
+                              ),
+                              itemCount: controller.courses.length,
+                              itemBuilder: (context, index) {
+                                final course = controller.courses[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: InkWell(
                                     borderRadius: BorderRadius.circular(18),
-                                    border: Border.all(
-                                      color: const Color(0xFF7C6A9F),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  foregroundDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    border: Border.all(
-                                      color: const Color(0xFF7C6A9F),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [Expanded(
-                                        flex: 3,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                course['name'] ?? 'Sin nombre',
-                                                style: const TextStyle(
-                                                  color: Color(0xFF4C3F6D),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                "${course['activities'] ?? 0} actividades",
-                                                style: const TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                    onTap: () => controller.abrirCurso(course),
+                                    child: Container(
+                                      width: screenWidth * 0.9,
+                                      height: screenWidth * 0.25,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFFFFF),
+                                        borderRadius: BorderRadius.circular(18),
+                                        border: Border.all(
+                                          color: const Color(0xFF7C6A9F),
+                                          width: 2,
                                         ),
                                       ),
-                                    ],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              course['name'] ?? 'Sin nombre',
+                                              style: const TextStyle(
+                                                color: Color(0xFF4C3F6D),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              "${course['activities'] ?? 0} actividades",
+                                              style: const TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             );
-                          },
-                        ),
-                      );
-                    }),
+                          }),
 
-                    Obx(
-                      () => authController.isTeacher.value
-                          ? Positioned(
-                              right: 18,
-                              bottom: 18,
-                              child: ElevatedButton(
-                                onPressed: controller.abrirCrearCurso,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF4C3F6D),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 18,
-                                    vertical: 14,
-                                  ),
-                                ),
-                                child: const Text(
-                                  "+ Crear curso",
-                                  style: TextStyle(
-                                    color: Color(0xFFFFFFFF),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink(),
+                          // BOTÓN FLOTANTE (Solo para profesores)
+                          Obx(
+                            () => authController.isTeacher.value
+                                ? Positioned(
+                                    right: 18,
+                                    bottom: 18,
+                                    child: ElevatedButton(
+                                      onPressed: controller.abrirCrearCurso,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF4C3F6D,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 14,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "+ Crear curso",
+                                        style: TextStyle(
+                                          color: Color(0xFFFFFFFF),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
