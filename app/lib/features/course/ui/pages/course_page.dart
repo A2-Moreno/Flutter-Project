@@ -23,7 +23,7 @@ class _CourseScreenState extends State<CourseScreen> {
   final CourseController controller = Get.find();
 
   final AuthenticationController authController = Get.find();
-
+  final showAvailable = true.obs;
   @override
   void initState() {
     super.initState();
@@ -120,6 +120,74 @@ class _CourseScreenState extends State<CourseScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 12),
+
+                    Obx(() {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => showAvailable.value = true,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: showAvailable.value
+                                      ? const Color(0xFF4C3F6D)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: const Color(0xFF4C3F6D),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Disponibles",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: showAvailable.value
+                                        ? Colors.white
+                                        : const Color(0xFF4C3F6D),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => showAvailable.value = false,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: !showAvailable.value
+                                      ? const Color(0xFF4C3F6D)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: const Color(0xFF4C3F6D),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Expiradas",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: !showAvailable.value
+                                        ? Colors.white
+                                        : const Color(0xFF4C3F6D),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+
                     Expanded(
                       child: Obx(() {
                         if (controller.isLoading.value) {
@@ -127,8 +195,10 @@ class _CourseScreenState extends State<CourseScreen> {
                             child: CircularProgressIndicator(),
                           );
                         }
-
-                        if (controller.activities.isEmpty) {
+                        final activities = showAvailable.value
+                            ? controller.availableActivities
+                            : controller.expiredActivities;
+                        if (activities.isEmpty) {
                           return const Center(
                             child: Text(
                               "No hay actividades aún",
@@ -142,9 +212,9 @@ class _CourseScreenState extends State<CourseScreen> {
 
                         return ListView.builder(
                           padding: const EdgeInsets.fromLTRB(18, 0, 18, 100),
-                          itemCount: controller.activities.length,
+                          itemCount: activities.length,
                           itemBuilder: (context, index) {
-                            final activity = controller.activities[index];
+                            final activity = activities[index];
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 20),

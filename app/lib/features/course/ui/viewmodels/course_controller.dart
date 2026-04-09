@@ -16,6 +16,8 @@ class CourseController extends GetxController {
 
   final categories = <Category>[].obs;
   final activities = <Activity>[].obs;
+  final expiredActivities = <Activity>[].obs;
+  final availableActivities = <Activity>[].obs;
 
   final isLoading = false.obs;
 
@@ -33,6 +35,14 @@ class CourseController extends GetxController {
       isLoading.value = true;
 
       final data = await getActivities.execute(courseId);
+      DateTime ahora = DateTime.now();
+      for (final activity in data) {
+        if (ahora.isAfter(activity.endDate)) {
+          expiredActivities.add(activity);
+        } else {
+          availableActivities.add(activity);
+        }
+      }
       activities.assignAll(data);
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -54,7 +64,6 @@ class CourseController extends GetxController {
   }
 
   void createActivityPage(String courseId) async {
-
     final result = await Get.to(
       () => CreateEvaluationPage(courseId: courseId, categories: categories),
     );
@@ -62,5 +71,4 @@ class CourseController extends GetxController {
       await loadActivities(courseId);
     }
   }
-
 }
