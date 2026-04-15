@@ -20,4 +20,5 @@ abstract class IEvaluationRemoteDataSource {
     String userId,
   );
   Future<Map<String, dynamic>?> getUserById(String userId);
+
 }

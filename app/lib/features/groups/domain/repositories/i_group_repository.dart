@@ -2,16 +2,13 @@ import '../models/group_model.dart';
 import '../models/all_groups_model.dart';
 
 abstract class IGroupDetailRepository {
-
   /// Profesor puede ver todos los grupos
   Future<List<Group>> getGroupsByCategory(String activityId);
 
   /// Estudiante solo obtiene su grupo en la categoria
-  Future<Group?> getMyGroup(
-    String activityId,
-    String userId,
-  );
+  Future<Group?> getMyGroup(String activityId, String userId);
 
-  Future<List<AllMyGroups>> getAllMyGroups(String courseId,String userId);
+  Future<List<AllMyGroups>> getAllMyGroups(String courseId, String userId);
 
+  Future<double> getGlobalAverage(String activityId);
 }

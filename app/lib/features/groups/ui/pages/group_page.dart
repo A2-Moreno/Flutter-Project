@@ -38,6 +38,7 @@ class _GroupScreenState extends State<GroupScreen> {
   void initState() {
     super.initState();
     controller.loadGroups(widget.activity.id);
+    controller.loadGlobalAverage(widget.activity.id);
   }
 
   @override
@@ -172,12 +173,12 @@ class _GroupScreenState extends State<GroupScreen> {
                         );
                       }),
                     ),
-                    /*
+
+                    ///*
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 40),
                       child: Center(
                         child: Column(
-                          
                           children: [
                             const Text(
                               "Media de la evaluación",
@@ -201,7 +202,6 @@ class _GroupScreenState extends State<GroupScreen> {
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8),
@@ -215,45 +215,55 @@ class _GroupScreenState extends State<GroupScreen> {
                                         ),
                                         shape: BoxShape.rectangle,
                                       ),
-                                      child: const Center(
-                                        child: Text(
-                                          "4.3",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                      child: Center(
+                                        child: Obx(() {
+                                          if (controller.isLoading2.value) {
+                                            return const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                            );
+                                          }
+
+                                          return Text(
+                                            controller.globalAverage.value
+                                                .toStringAsFixed(1),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        }),
                                       ),
                                     ),
                                   ),
-                                  
-                                  Text(
+                                  const Text(
                                     "Promedio de todas",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Color(0xFF4C3F6D),
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     "las evaluaciones",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Color(0xFF4C3F6D),
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  
                                 ],
                               ),
                             ),
                           ],
-                          
                         ),
-                        
                       ),
-                    ),*/
+                    ),
                   ],
                 ),
               ),

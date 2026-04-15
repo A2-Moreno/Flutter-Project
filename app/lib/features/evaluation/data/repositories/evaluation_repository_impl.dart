@@ -75,4 +75,5 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
   ) {
     return remote.getScoresByEvaluation(evaluationId);
   }
+
 }

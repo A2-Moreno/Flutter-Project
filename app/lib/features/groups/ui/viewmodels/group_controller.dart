@@ -7,6 +7,7 @@ import '../../domain/models/all_groups_model.dart';
 import '../../domain/use_cases/get_groups_by_category_usecase.dart';
 import '../../domain/use_cases/get_my_group_usecase.dart';
 import '../../domain/use_cases/get_all_my_groups.dart';
+import '../../domain/use_cases/get_evaluations_by_activity_usecase.dart';
 import '../../../../core/i_local_preferences.dart';
 import '../../../evaluation/ui/pages/teacher_results_page.dart';
 
@@ -14,23 +15,26 @@ class GroupController extends GetxController {
   final GetGroupsByCategory getGroupsByCategory;
   final GetMyGroup getMyGroup;
   final GetAllMyGroups getAllMyGroups;
+  final GetGlobalAverage getGlobalAverage;
 
   GroupController(
     this.getGroupsByCategory,
     this.getMyGroup,
     this.getAllMyGroups,
+    this.getGlobalAverage,
   );
 
   final isLoading = false.obs;
+  final isLoading2 = false.obs;
   final groups = <Group>[].obs;
   final myGroup = Rxn<Group>();
   final isTeacher = false.obs;
   final error = "".obs;
   final allMyGroups = <AllMyGroups>[].obs;
+  final globalAverage = 0.0.obs;
 
   Future<void> loadGroups(String activityId) async {
     try {
-
       isLoading.value = true;
       error.value = "";
 
@@ -61,7 +65,6 @@ class GroupController extends GetxController {
           myGroup.value = result;
         }
       }
-
     } catch (e) {
       print("ERROR EN LOAD GROUPS: $e");
       logError("Error loading groups: $e");
@@ -104,6 +107,21 @@ class GroupController extends GetxController {
     print("🔄 REFRESH DE GRUPOS");
     await loadGroups(categoryId);
   }
+
+Future<void> loadGlobalAverage(String activityId) async {
+  isLoading2.value = true;
+  print('estamos en el loadGlobalAverage con activityId: $activityId');
+  try {
+    final avg = await getGlobalAverage.execute(activityId);
+    globalAverage.value = avg;
+    print('Global average cargado: $avg');
+  } catch (e) {
+    print("ERROR EN loadGlobalAverage: $e");
+    globalAverage.value = 0.0;
+  } finally {
+    isLoading2.value = false;
+  }
+}
 
   void openGroup(Activity activity, Group group) {
     Get.to(() => TeacherResultsPage(activity: activity, group: group));

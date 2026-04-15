@@ -3,4 +3,8 @@ abstract class IGroupDetailRemoteDataSource {
     required String table,
     Map<String, String>? filters,
   });
+  Future<List<Map<String, dynamic>>> getEvaluationsByActivity(
+    String activityId,
+  );
+  Future<List<Map<String, dynamic>>> getScoresByEvaluation(String evaluationId);
 }

@@ -11,6 +11,8 @@ import '../domain/use_cases/get_groups_by_category_usecase.dart';
 import '../domain/use_cases/get_my_group_usecase.dart';
 import '../domain/use_cases/get_all_my_groups.dart';
 
+import '../domain/use_cases/get_evaluations_by_activity_usecase.dart';
+
 // CONTROLLER
 import '../ui/viewmodels/group_controller.dart';
 
@@ -41,7 +43,13 @@ class GroupDetailBinding extends Bindings {
         Get.find(), // GetGroupsByCategory
         Get.find(), // GetMyGroup
         Get.find(),
+        Get.find(), // GetGlobalAverage
       ),
+      fenix: true,
+    );
+
+    Get.lazyPut<GetGlobalAverage>(
+      () => GetGlobalAverage(Get.find()),
       fenix: true,
     );
   }

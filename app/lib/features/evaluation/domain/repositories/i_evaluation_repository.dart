@@ -24,4 +24,5 @@ abstract class IEvaluationRepository {
   );
 
   Future<List<Map<String, dynamic>>> getScoresByEvaluation(String evaluationId);
+
 }

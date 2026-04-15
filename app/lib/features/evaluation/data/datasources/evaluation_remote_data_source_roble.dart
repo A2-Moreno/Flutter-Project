@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:loggy/loggy.dart';
 import 'dart:math';
 
 import '../../../../../core/i_local_preferences.dart';
@@ -15,9 +14,7 @@ String generateId() {
   return List.generate(12, (index) => chars[rand.nextInt(chars.length)]).join();
 }
 
-class EvaluationRemoteDataSourceRoble
-    implements IEvaluationRemoteDataSource {
-
+class EvaluationRemoteDataSourceRoble implements IEvaluationRemoteDataSource {
   final http.Client httpClient;
 
   final contract = dotenv.get(
@@ -28,7 +25,7 @@ class EvaluationRemoteDataSourceRoble
   final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
 
   EvaluationRemoteDataSourceRoble({http.Client? client})
-      : httpClient = client ?? http.Client();
+    : httpClient = client ?? http.Client();
 
   Future<String> _getToken() async {
     final prefs = Get.find<ILocalPreferences>();
@@ -41,11 +38,7 @@ class EvaluationRemoteDataSourceRoble
   // CHECK IF USER EVALUATED
   // =============================
   @override
-  Future<bool> hasUserEvaluated(
-    String activityId,
-    String evaluatorId,
-  ) async {
-
+  Future<bool> hasUserEvaluated(String activityId, String evaluatorId) async {
     final token = await _getToken();
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', {
@@ -78,7 +71,6 @@ class EvaluationRemoteDataSourceRoble
     String evaluatorId,
     Map<String, Map<String, double>> data,
   ) async {
-
     final token = await _getToken();
 
     for (final entry in data.entries) {
@@ -97,7 +89,7 @@ class EvaluationRemoteDataSourceRoble
             "group_id": groupId,
             "evaluator_id": evaluatorId,
             "evaluated_id": evaluatedId,
-          }
+          },
         ],
       });
 
@@ -153,7 +145,6 @@ class EvaluationRemoteDataSourceRoble
     String activityId,
     String userId,
   ) async {
-
     final token = await _getToken();
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', {
@@ -181,7 +172,6 @@ class EvaluationRemoteDataSourceRoble
   Future<List<Map<String, dynamic>>> getScoresByEvaluation(
     String evaluationId,
   ) async {
-
     final token = await _getToken();
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', {
@@ -205,7 +195,6 @@ class EvaluationRemoteDataSourceRoble
     String activityId,
     String userId,
   ) async {
-
     final token = await _getToken();
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', {
@@ -225,13 +214,11 @@ class EvaluationRemoteDataSourceRoble
     return List<Map<String, dynamic>>.from(jsonDecode(response.body));
   }
 
-
   // =============================
   // GET USER
   // =============================
   @override
   Future<Map<String, dynamic>?> getUserById(String userId) async {
-
     final token = await _getToken();
 
     final uri = Uri.https(baseUrl, '/database/$contract/read', {

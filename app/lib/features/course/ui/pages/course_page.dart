@@ -174,7 +174,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ),
                                   ),
                                   child: Text(
-                                    "Finalizadas",
+                                    "Finalizadas", 
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: !showAvailable.value

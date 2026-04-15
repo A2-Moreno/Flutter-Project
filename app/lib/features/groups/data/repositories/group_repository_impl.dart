@@ -227,4 +227,26 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
 
     return result;
   }
+
+  @override
+  Future<double> getGlobalAverage(String activityId) async {
+    final evaluations = await remote.getEvaluationsByActivity(activityId);
+
+    if (evaluations.isEmpty) return 0.0;
+
+    List<double> allScores = [];
+
+    for (final eval in evaluations) {
+      final evaluationId = eval["_id"];
+
+      final scores = await remote.getScoresByEvaluation(evaluationId);
+
+      for (final s in scores) {
+        allScores.add((s["score"] as num).toDouble());
+      }
+    }
+
+    if (allScores.isEmpty) return 0.0;
+    return allScores.reduce((a, b) => a + b) / allScores.length;
+  }
 }
