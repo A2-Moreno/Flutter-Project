@@ -222,75 +222,53 @@ class _CourseScreenState extends State<CourseScreen> {
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 20),
-                              child: Container(
-                                width: screenWidth * 0.9,
-                                height: screenWidth * 0.25,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(18),
-                                  border: Border.all(
-                                    color: const Color(0xFF7C6A9F),
-                                    width: 2,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(18),
+                                onTap: () {
+                                  if (!authController.isTeacher.value) {
+                                    controller.openCategoryStudent(activity);
+                                  } else {
+                                    controller.openCategory(activity);
+                                  }
+                                },
+                                child: Container(
+                                  width: screenWidth * 0.9,
+                                  height: screenWidth * 0.25,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 18,
                                   ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            activity.name,
-                                            style: const TextStyle(
-                                              color: Color(0xFF4C3F6D),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              formatDateEs(activity.endDate),
-                                              style: const TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(18),
+                                    border: Border.all(
+                                      color: const Color(0xFF7C6A9F),
+                                      width: 2,
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        if (!authController.isTeacher.value) {
-                                          controller.openCategoryStudent(
-                                            activity,
-                                          );
-                                        } else {
-                                          controller.openCategory(activity);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xFF4C3F6D,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        activity.name,
+                                        style: const TextStyle(
+                                          color: Color(0xFF4C3F6D),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            24,
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          formatDateEs(activity.endDate),
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 13,
                                           ),
                                         ),
                                       ),
-                                      child: const Text(
-                                        "Ver",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
