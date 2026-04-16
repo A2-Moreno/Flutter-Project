@@ -6,6 +6,7 @@ import '../../../../core/widgets/header.dart';
 import '../viewmodels/course_controller.dart';
 import '../../../save_to_db/ui/viewmodels/savedb_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
+import '../../../general_results/ui/viewmodels/general_controller.dart';
 
 //import '../../../student/ui/pages/groups_page.dart';
 
@@ -21,6 +22,7 @@ class CourseScreen extends StatefulWidget {
 class _CourseScreenState extends State<CourseScreen> {
   final importController = Get.find<ImportGroupsController>();
   final CourseController controller = Get.find();
+  final CourseResultsController resultsController = Get.find();
 
   final AuthenticationController authController = Get.find();
   final showAvailable = true.obs;
@@ -174,7 +176,7 @@ class _CourseScreenState extends State<CourseScreen> {
                                     ),
                                   ),
                                   child: Text(
-                                    "Finalizadas", 
+                                    "Finalizadas",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: !showAvailable.value
@@ -285,7 +287,10 @@ class _CourseScreenState extends State<CourseScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                resultsController.loadCourseResults(courseId);
+                                resultsController.loadGroupsGlobalAverage(courseId);
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4C3F6D),
                                 shape: RoundedRectangleBorder(
