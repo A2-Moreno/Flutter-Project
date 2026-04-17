@@ -4,7 +4,6 @@ import 'package:loggy/loggy.dart';
 import '../../domain/use_cases/get_global_average_usecase.dart';
 //import '../../domain/models/global_average_model.dart';
 import '../../domain/use_cases/get_groups_global_average.dart';
-import '../../domain/models/groups_global_average_model.dart';
 
 class CourseResultsController extends GetxController {
   final GetCourseGlobalAverages getCourseAveragesUsecase;
@@ -15,54 +14,35 @@ class CourseResultsController extends GetxController {
     this.getGroupsGlobalAverageUsecase,
   );
 
-  // =============================
-  // STATE
-  // =============================
-
   final isLoading = false.obs;
   final error = "".obs;
-
-  /// Lista lista para UI
   final students = <Map<String, dynamic>>[].obs;
-      final group_results = <GroupActivityAverage>[].obs;
-
-  // =============================
-  // LOAD DATA
-  // =============================
+  final groupResults = <Map<String, dynamic>>[].obs;
 
   Future<void> loadCourseResults(String courseId) async {
     try {
-      logInfo("🔵 Iniciando carga de resultados del curso");
+      logInfo("Iniciando carga de resultados del curso");
 
       isLoading.value = true;
       error.value = "";
 
       final results = await getCourseAveragesUsecase.execute(courseId);
 
-      logInfo("🟢 Resultados crudos: ${results.length}");
-
       if (results.isEmpty) {
         students.clear();
         return;
       }
 
-      // 🔹 Mapear a formato UI
       final mapped = results.map((e) {
-        return {
-          "id": e.studentId,
-          "name": e.studentName,
-          "average": e.average, // double
-        };
+        return {"id": e.studentId, "name": e.studentName, "average": e.average};
       }).toList();
 
-      // 🔹 Ordenar de mayor a menor
       mapped.sort((a, b) {
         final aAvg = a["average"] as double;
         final bAvg = b["average"] as double;
         return bAvg.compareTo(aAvg);
       });
 
-      // 🔹 Formatear para UI (string)
       final formatted = mapped.map((e) {
         return {
           "id": e["id"],
@@ -73,7 +53,6 @@ class CourseResultsController extends GetxController {
 
       students.assignAll(formatted);
 
-      logInfo("🟢 Resultados listos para UI: ${students.length}");
       print(students);
     } catch (e) {
       logError("🔴 Error cargando resultados del curso: $e");
@@ -83,35 +62,43 @@ class CourseResultsController extends GetxController {
     }
   }
 
-    Future<void> loadGroupsGlobalAverage(String courseId) async {
-      try {
-        isLoading.value = true;
-        error.value = "";
+  Future<void> loadGroupsGlobalAverage(String courseId) async {
+    try {
+      isLoading.value = true;
+      error.value = "";
 
-        final data = await getGroupsGlobalAverageUsecase.execute(courseId);
+      final data = await getGroupsGlobalAverageUsecase.execute(courseId);
 
-        group_results.assignAll(data);
-        print(group_results);
-      } catch (e) {
-        error.value = e.toString();
-      } finally {
-        isLoading.value = false;
+      if (data.isEmpty) {
+        groupResults.clear();
+        return;
       }
-    }
 
-  // =============================
-  // HELPERS UI
-  // =============================
+      final mapped = data.map((activity) {
+        final groups = activity.groups.map((g) {
+          return {
+            "id": g.groupId,
+            "name": g.groupName,
+            "average": g.average != null ? g.average!.toStringAsFixed(1) : "--",
+          };
+        }).toList();
+
+        return {"activity": activity.activityName, "groups": groups};
+      }).toList();
+
+      groupResults.assignAll(mapped);
+
+    } catch (e) {
+      logError("🔴 Error cargando promedios de grupos: $e");
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   bool get hasData => students.isNotEmpty;
-
   bool get isEmpty => students.isEmpty && !isLoading.value;
-
   String get emptyMessage => "No hay resultados disponibles";
-
-  // =============================
-  // OPCIONAL: TOP 3 (para UI PRO)
-  // =============================
 
   List<Map<String, dynamic>> get top3 {
     if (students.length <= 3) return students;

@@ -11,7 +11,7 @@ class GroupActivityAverage {
 class GroupAverage {
   final String groupId;
   final String groupName;
-  final double average;
+  final double? average; // puede ser null si no hay evaluaciones
 
   GroupAverage({
     required this.groupId,

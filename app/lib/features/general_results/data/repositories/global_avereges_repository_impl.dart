@@ -13,18 +13,12 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
   Future<List<StudentGlobalAverage>> getCourseGlobalAverages(
     String courseId,
   ) async {
-    // =============================
-    // 1. TRAER ACTIVIDADES
-    // =============================
     final activities = await remote.getActivitiesByCourse(courseId);
 
     if (activities.isEmpty) return [];
 
     final activityIds = activities.map((a) => a["_id"].toString()).toList();
 
-    // =============================
-    // 2. TRAER TODAS LAS EVALUACIONES
-    // =============================
     final evaluationsResponses = await Future.wait(
       activityIds.map((id) => remote.getEvaluationsByActivity(id)),
     );
@@ -33,18 +27,12 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
 
     if (allEvaluations.isEmpty) return [];
 
-    // =============================
-    // 3. TRAER TODOS LOS SCORES (PARALELO)
-    // =============================
     final scoresResponses = await Future.wait(
       allEvaluations.map((eval) {
         return remote.getScoresByEvaluation(eval["_id"]);
       }),
     );
 
-    // =============================
-    // 4. AGRUPAR POR ESTUDIANTE
-    // =============================
     final Map<String, List<double>> studentScores = {};
 
     for (int i = 0; i < allEvaluations.length; i++) {
@@ -65,9 +53,6 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
 
     if (studentScores.isEmpty) return [];
 
-    // =============================
-    // 5. TRAER USUARIOS (PARALELO)
-    // =============================
     final userIds = studentScores.keys.toList();
 
     final userResponses = await Future.wait(
@@ -84,9 +69,6 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
       }
     }
 
-    // =============================
-    // 6. CALCULAR PROMEDIOS
-    // =============================
     final List<StudentGlobalAverage> result = [];
 
     studentScores.forEach((userId, scores) {
@@ -103,9 +85,6 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
       );
     });
 
-    // =============================
-    // 7. ORDENAR (TOP → BOTTOM)
-    // =============================
     result.sort((a, b) => b.average.compareTo(a.average));
 
     return result;
@@ -122,10 +101,14 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
     for (final activity in activities) {
       final activityId = activity["_id"];
       final activityName = activity["name"];
+      final categoryId = activity["category_id"];
+
+      final groups = await remote.read(
+        table: "groups",
+        filters: {"category_id": categoryId},
+      );
 
       final evaluations = await remote.getEvaluationsByActivity(activityId);
-
-      // 🔹 Agrupar evaluaciones por grupo
       final Map<String, List<Map<String, dynamic>>> groupedByGroup = {};
 
       for (final eval in evaluations) {
@@ -137,18 +120,11 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
 
       List<GroupAverage> groupAverages = [];
 
-      for (final entry in groupedByGroup.entries) {
-        final groupId = entry.key;
-        final evals = entry.value;
+      for (final group in groups) {
+        final groupId = group["_id"];
+        final groupName = group["name"];
 
-        final groupData = await remote.read(
-          table: "groups",
-          filters: {"_id": groupId},
-        );
-
-        final groupName = groupData.isNotEmpty
-            ? groupData.first["name"]
-            : "Grupo";
+        final evals = groupedByGroup[groupId] ?? [];
 
         final List<double> allScores = [];
 
@@ -161,12 +137,18 @@ class GeneralResultsRepositoryImpl implements IGeneralResultsRepository {
           }
         }
 
-        if (allScores.isEmpty) continue;
+        double? avg;
 
-        final avg = allScores.reduce((a, b) => a + b) / allScores.length;
+        if (allScores.isNotEmpty) {
+          avg = allScores.reduce((a, b) => a + b) / allScores.length;
+        }
 
         groupAverages.add(
-          GroupAverage(groupId: groupId, groupName: groupName, average: avg),
+          GroupAverage(
+            groupId: groupId,
+            groupName: groupName,
+            average: avg,
+          ),
         );
       }
 
