@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:app/core/i_local_preferences.dart';
 import 'package:app/features/activity/domain/models/activity_model.dart';
 import 'package:app/features/activity/domain/usecases/get_activities_by_course_usecase.dart';
@@ -10,7 +11,6 @@ import 'package:app/features/course/ui/viewmodels/course_controller.dart';
 import 'package:app/features/import_csv/domain/use_cases/import_groups.dart';
 import 'package:app/features/save_to_db/domain/use_cases/import_groupsdb.dart';
 import 'package:app/features/save_to_db/ui/viewmodels/savedb_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -187,5 +187,17 @@ void main() {
 
     expect(find.text('Importar Grupos'), findsOneWidget);
     expect(find.text('Crear evaluación'), findsOneWidget);
+  });
+
+  testWidgets('Debe mostrar indicador de carga cuando isLoading es true', (
+    WidgetTester tester,
+  ) async {
+    controller.isLoading.value = true;
+
+    await tester.pumpWidget(
+      GetMaterialApp(home: CourseScreen(course: dummyCourse)),
+    );
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
