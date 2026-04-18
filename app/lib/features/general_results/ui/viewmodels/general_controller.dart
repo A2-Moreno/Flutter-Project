@@ -87,7 +87,6 @@ class CourseResultsController extends GetxController {
       }).toList();
 
       groupResults.assignAll(mapped);
-
     } catch (e) {
       logError("🔴 Error cargando promedios de grupos: $e");
       error.value = e.toString();

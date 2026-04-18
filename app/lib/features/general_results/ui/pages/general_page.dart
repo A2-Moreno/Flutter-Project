@@ -4,6 +4,7 @@ import '../../../../core/widgets/header.dart';
 import '../viewmodels/general_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
 import '../../../evaluation/ui/pages/results_page.dart';
+import '../../../evaluation/ui/pages/results_page.dart';
 
 class GeneralPage extends StatefulWidget {
   final String courseId;
@@ -123,13 +124,19 @@ class _GeneralPageState extends State<GeneralPage> {
                     ),
                     Expanded(
                       child: Obx(() {
-                        if (controller.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
                         if (showStudents) {
+                          if (controller.isLoading.value) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (controller.students.isEmpty) {
+                            return const Center(
+                              child: Text("No hay estudiantes"),
+                            );
+                          }
+
                           return ListView.builder(
                             itemCount: controller.students.length,
                             itemBuilder: (context, index) {
@@ -191,12 +198,94 @@ class _GeneralPageState extends State<GeneralPage> {
                             },
                           );
                         } else {
+                          if (controller.isLoading.value) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (controller.groupResults.isEmpty) {
+                            return const Center(child: Text("No hay datos"));
+                          }
+
                           return ListView.builder(
-                            itemCount: controller.group_results.length,
+                            itemCount: controller.groupResults.length,
                             itemBuilder: (context, index) {
-                              final groupResult =
-                                  controller.group_results[index];
-                              return ListTile();
+                              final activity = controller.groupResults[index];
+                              final groups = activity["groups"] as List;
+
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.1,
+                                  vertical: 6,
+                                ),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF4C3F6D),
+                                        blurRadius: 2,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ExpansionTile(
+                                    title: Text(
+                                      activity["activity"],
+                                      style: const TextStyle(
+                                        color: Color(0xFF4C3F6D),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    children: [
+                                      SizedBox(
+                                        height: 200,
+                                        child: ListView.builder(
+                                          itemCount: groups.length,
+                                          itemBuilder: (context, i) {
+                                            final group = groups[i];
+
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                    20,
+                                                    8,
+                                                    8,
+                                                    8,
+                                                  ),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(group["name"]),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Center(
+                                                      child: Text(
+                                                        group["average"]
+                                                            .toString(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
                             },
                           );
                         }
