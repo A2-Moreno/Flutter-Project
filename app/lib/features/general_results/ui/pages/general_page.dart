@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import '../../../../core/widgets/header.dart';
 import '../viewmodels/general_controller.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
-import '../../../evaluation/ui/pages/results_page.dart';
-import '../../../evaluation/ui/pages/results_page.dart';
 
 class GeneralPage extends StatefulWidget {
   final String courseId;
@@ -43,7 +41,6 @@ class _GeneralPageState extends State<GeneralPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenheidht = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color(0xFF4C3F6D),

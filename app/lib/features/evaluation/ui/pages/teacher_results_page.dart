@@ -28,10 +28,7 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
   void initState() {
     super.initState();
 
-    controller.loadGroupResults(
-      widget.activity,
-      widget.group,
-    );
+    controller.loadGroupResults(widget.activity, widget.group);
   }
 
   @override
@@ -48,7 +45,7 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF4F4F4),
+                  color: Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(28),
                     topRight: Radius.circular(28),
@@ -56,15 +53,11 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                 ),
                 child: Obx(() {
                   if (controller.isLoading.value) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (controller.error.isNotEmpty) {
-                    return Center(
-                      child: Text(controller.error.value),
-                    );
+                    return Center(child: Text(controller.error.value));
                   }
 
                   final items = controller.studentsResults;
@@ -75,11 +68,11 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                     );
                   }
 
-                  
                   final sorted = [...items];
-                  sorted.sort((a, b) =>
-                      double.parse(b["average"])
-                          .compareTo(double.parse(a["average"]))
+                  sorted.sort(
+                    (a, b) => double.parse(
+                      b["average"],
+                    ).compareTo(double.parse(a["average"])),
                   );
 
                   return ListView.builder(
@@ -92,7 +85,7 @@ class _TeacherResultsPageState extends State<TeacherResultsPage> {
                         child: ResultTableCard(
                           name: item["name"],
                           average: item["average"],
-                          highlighted: index == 0, 
+                          highlighted: index == 0,
                           criteria: List<Map<String, String>>.from(
                             item["criteria"],
                           ),

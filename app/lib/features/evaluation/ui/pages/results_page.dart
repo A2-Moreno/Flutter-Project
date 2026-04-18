@@ -36,7 +36,7 @@ class _ResultsPageState extends State<ResultsPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF4F4F4),
+                  color: Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(28),
                     topRight: Radius.circular(28),

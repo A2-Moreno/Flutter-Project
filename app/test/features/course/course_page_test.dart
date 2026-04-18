@@ -40,6 +40,8 @@ class MockCourseController extends GetxController implements CourseController {
   void createActivityPage(dynamic id) {}
   @override
   void openGroupsStudent(dynamic id) {}
+  @override
+  void openGeneralResults(dynamic id) {}
 
   @override
   GetActivitiesByCourse get getActivities => throw UnimplementedError();

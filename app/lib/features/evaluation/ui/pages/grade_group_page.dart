@@ -48,7 +48,7 @@ class _GradeGroupPageState extends State<GradeGroupPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF4F4F4),
+                  color: Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(28),
                     topRight: Radius.circular(28),
@@ -305,9 +305,7 @@ class _MemberGradeCard extends StatelessWidget {
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
-                            inputFormatters: [
-                              GradeInputFormatter(),
-                            ],
+                            inputFormatters: [GradeInputFormatter()],
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Color(0xFF4C3F6D),
