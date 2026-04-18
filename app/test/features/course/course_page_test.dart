@@ -1,3 +1,4 @@
+import 'package:app/features/general_results/ui/viewmodels/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/i_local_preferences.dart';
 import 'package:app/features/activity/domain/models/activity_model.dart';
@@ -105,6 +106,14 @@ class MockImportGroupsController extends GetxController
   ImportGroupsToDb get importGroupsToDb => throw UnimplementedError();
 }
 
+class MockCourseResultsController extends GetxController
+    implements CourseResultsController {
+  @override
+  var isLoading = false.obs;
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   final testActivities = [
     Activity(
@@ -134,6 +143,7 @@ void main() {
   late CourseController controller;
   late AuthenticationController authController;
   late ImportGroupsController importController;
+  late CourseResultsController resultsController;
 
   setUp(() {
     importController = Get.put<ImportGroupsController>(
@@ -142,6 +152,9 @@ void main() {
     controller = Get.put<CourseController>(MockCourseController());
     authController = Get.put<AuthenticationController>(
       MockAuthenticationController(),
+    );
+    resultsController = Get.put<CourseResultsController>(
+      MockCourseResultsController(),
     );
   });
 
