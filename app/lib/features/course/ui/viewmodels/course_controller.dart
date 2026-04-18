@@ -7,6 +7,7 @@ import '../../../evaluation/ui/pages/groups_page.dart';
 import '../../../teacher/ui/pages/create_evaluation_page.dart';
 import '../../../activity/domain/models/activity_model.dart';
 import '../../../activity/domain/usecases/get_activities_by_course_usecase.dart';
+import '../../../general_results/ui/pages/general_page.dart';
 
 class CourseController extends GetxController {
   final GetCategories getCategories;
@@ -61,6 +62,10 @@ class CourseController extends GetxController {
 
   void openGroupsStudent(String courseId) {
     Get.to(() => GroupsPage(courseId: courseId));
+  }
+
+  void openGeneralResults(String courseId) {
+    Get.to(() => GeneralPage(courseId: courseId));
   }
 
   void createActivityPage(String courseId) async {

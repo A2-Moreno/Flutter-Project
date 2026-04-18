@@ -288,8 +288,7 @@ class _CourseScreenState extends State<CourseScreen> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                resultsController.loadCourseResults(courseId);
-                                resultsController.loadGroupsGlobalAverage(courseId);
+                                controller.openGeneralResults(courseId);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF4C3F6D),
