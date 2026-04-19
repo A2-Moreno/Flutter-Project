@@ -178,9 +178,6 @@ class GradeInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    // Solo permite:
-    // 1, 1.0, 1.5, 2, 2.3, ..., 5, 5.0
-    // Máximo un decimal
     final regex = RegExp(r'^[1-5](\.\d?)?$');
 
     if (!regex.hasMatch(text)) {
