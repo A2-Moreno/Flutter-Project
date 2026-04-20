@@ -27,9 +27,11 @@ class AppHeader extends StatelessWidget {
             children: [
               SizedBox(
                 width: 40,
-                child: leading ??
+                child:
+                    leading ??
                     (showBackButton
                         ? IconButton(
+                            key: const Key("backButton"),
                             onPressed: () => Get.back(),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
