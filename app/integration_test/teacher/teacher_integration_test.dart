@@ -171,5 +171,11 @@ void main() {
 
     await slowDown(tester, 2);
     await tester.pumpAndSettle();
+
+    expect(find.text("Equipo de Desarrollo Alfa"), findsOneWidget);
+
+    await tester.tap(find.text("Equipo de Desarrollo Alfa"));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
   });
 }

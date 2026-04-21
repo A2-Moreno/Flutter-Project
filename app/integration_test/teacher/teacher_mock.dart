@@ -4,6 +4,9 @@ import 'package:app/features/activity/domain/usecases/get_activities_by_course_u
 import 'package:app/features/course/domain/models/category_model.dart';
 import 'package:app/features/course/domain/use_cases/get_categories_usecase.dart';
 import 'package:app/features/course/ui/viewmodels/course_controller.dart';
+import 'package:app/features/evaluation/domain/models/evaluation_result_model.dart';
+import 'package:app/features/evaluation/domain/usecases/get_evaluation_results_usecase.dart';
+import 'package:app/features/evaluation/ui/viewmodels/teacher_results_controller.dart';
 import 'package:app/features/general_results/domain/models/global_average_model.dart';
 import 'package:app/features/general_results/domain/models/groups_global_average_model.dart';
 import 'package:app/features/general_results/domain/use_cases/get_global_average_usecase.dart';
@@ -44,6 +47,20 @@ class TeacherMock {
     final mockGetMyGroup = MockGetMyGroup();
     final mockGetAllGroups = MockGetAllMyGroups();
     final mockGetGlobalAvg = MockGetGlobalAverage();
+    final mockGetResults = MockGetEvaluationResults();
+
+    final resultadosAna = [
+      EvaluationResult(
+        evaluatorId: "prof_1",
+        evaluatorName: "Profesor Test",
+        scoresByCriterion: {
+          "puntualidad": [5.0, 4.0],
+          "aportes": [4.5],
+          "compromiso": [5.0, 4.0],
+          "actitud": [4.5],
+        },
+      ),
+    ];
 
     final listaDeGrupos = [
       Group(
@@ -271,6 +288,10 @@ class TeacherMock {
     when(mockGetGroups.execute(any)).thenAnswer((_) async => listaDeGrupos);
     when(mockGetGlobalAvg.execute(any)).thenAnswer((_) async => 4.8);
 
+    when(
+      mockGetResults.execute(any, any),
+    ).thenAnswer((_) async => resultadosAna);
+
     Get.put<ImportGroupsController>(
       ImportGroupsController(mockImportGroups, mockImportGroupsToDb),
       permanent: true,
@@ -293,6 +314,11 @@ class TeacherMock {
         mockGetAllGroups,
         mockGetGlobalAvg,
       ),
+      permanent: true,
+    );
+
+    Get.put<TeacherResultsController>(
+      TeacherResultsController(mockGetResults),
       permanent: true,
     );
   }
@@ -357,4 +383,13 @@ class MockGetGlobalAverage extends Mock implements GetGlobalAverage {
     Invocation.method(#execute, [activityId]),
     returnValue: Future.value(0.0),
   );
+}
+
+class MockGetEvaluationResults extends Mock implements GetEvaluationResults {
+  @override
+  Future<List<EvaluationResult>> execute(String? activityId, String? userId) =>
+      super.noSuchMethod(
+        Invocation.method(#execute, [activityId, userId]),
+        returnValue: Future.value(<EvaluationResult>[]),
+      );
 }
