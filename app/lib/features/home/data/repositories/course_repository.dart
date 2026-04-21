@@ -7,7 +7,21 @@ class CourseRepository implements ICourseRepository {
   CourseRepository(this.remote);
 
   @override
-  Future<List<Map<String, dynamic>>> getCoursesByUserEmail() {
-    return remote.getCoursesByUserEmail();
+  Future<List<Map<String, dynamic>>> getCoursesByUserEmail() async {
+    final courses = await remote.getCoursesByUserEmail();
+
+    List<Map<String, dynamic>> result = [];
+
+    for (final course in courses) {
+      final courseId = course["_id"];
+
+      final count = await remote.getActivitiesCountByCourse(courseId);
+
+      final enriched = {...course, "activities": count};
+
+      result.add(enriched);
+    }
+
+    return result;
   }
 }

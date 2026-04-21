@@ -123,4 +123,40 @@ class CourseRemoteDataSource implements ICourseRemoteDataSource {
       return courses;
     }
   }
+
+  @override
+  Future<int> getActivitiesCountByCourse(String courseId) async {
+    final contract = dotenv.get(
+      'EXPO_PUBLIC_ROBLE_PROJECT_ID',
+      fallback: "NO_ENV",
+    );
+
+    final String baseUrl = 'roble-api.openlab.uninorte.edu.co';
+
+    final ILocalPreferences prefs = Get.find();
+
+    final token = await prefs.getString('token');
+
+    if (token == null) {
+      throw Exception("No token");
+    }
+
+    final uri = Uri.https(baseUrl, '/database/$contract/read', {
+      'tableName': 'activity',
+      'course_id': courseId,
+    });
+
+    final response = await httpClient.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting activities");
+    }
+
+    final List<dynamic> data = jsonDecode(response.body);
+
+    return data.length;
+  }
 }
