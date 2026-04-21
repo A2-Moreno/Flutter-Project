@@ -157,6 +157,15 @@ class CourseRemoteDataSource implements ICourseRemoteDataSource {
 
     final List<dynamic> data = jsonDecode(response.body);
 
-    return data.length;
+    final now = DateTime.now();
+
+    final activeActivities = data.where((a) {
+      final start = DateTime.parse(a["start_date"]);
+      final end = DateTime.parse(a["end_date"]);
+
+      return now.isAfter(start) && now.isBefore(end);
+    }).toList();
+
+    return activeActivities.length;
   }
 }
