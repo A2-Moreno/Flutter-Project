@@ -29,8 +29,10 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    controller.loadCategories(widget.course['_id']);
-    controller.loadActivities(widget.course['_id']);
+    final String courseId = widget.course?['_id'] ?? 'c1';
+
+    controller.loadCategories(courseId);
+    controller.loadActivities(courseId);
   }
 
   @override

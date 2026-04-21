@@ -1,3 +1,4 @@
+import 'package:app/features/course/ui/viewmodels/course_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,6 +15,7 @@ import 'package:app/core/i_local_preferences.dart';
 import 'package:app/features/home/ui/viewmodels/home_controller.dart';
 import 'package:app/features/home/data/repositories/course_repository.dart';
 import 'package:app/features/home/data/datasource/course_remote_data_source.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../../test/helpers/test_helper.dart';
 import '../../test/helpers/test_helper.mocks.dart';
@@ -67,10 +69,16 @@ void main() {
     Get.put<CreateController>(CreateController(createRepo));
   });
 
+  tearDown(() {
+    Get.reset();
+  });
+
   Widget createWidget() => const GetMaterialApp(home: Central());
 
   testWidgets("Prueba de integración - Profesor", (tester) async {
     TeacherMock().setupTeacherMocks(mockClient, mockPrefs);
+
+    await initializeDateFormatting('es', null);
 
     // ***** LOGIN *****
     await tester.pumpWidget(createWidget());
@@ -117,7 +125,7 @@ void main() {
     );
     await slowDown(tester);
     await tester.enterText(find.byType(TextFormField).at(1), "1234");
-    await slowDown(tester);
+    await slowDown(tester, 2);
     await tester.tap(find.byKey(const Key("createButton")));
     await tester.pumpAndSettle();
     await slowDown(tester, 2);
@@ -132,9 +140,25 @@ void main() {
     await tester.pumpAndSettle();
 
     // ***** HOME *****
+    TeacherMock().injectCourseDependencies("c1");
     homeController.loadCourses();
     await tester.pumpAndSettle();
     await slowDown(tester, 2);
     expect(find.text("Curso de Robótica"), findsOneWidget);
+
+    await tester.tap(find.text("Criptografía Avanzada"));
+    await tester.pumpAndSettle();
+
+    // ***** COURSE ******
+    final courseController = Get.find<CourseController>();
+    await slowDown(tester, 2);
+    await tester.pumpAndSettle();
+
+    expect(courseController.activities.isNotEmpty, true);
+
+    expect(find.text("Proyecto I+D"), findsOneWidget);
+
+    await slowDown(tester, 2);
+    await tester.pumpAndSettle();
   });
 }
