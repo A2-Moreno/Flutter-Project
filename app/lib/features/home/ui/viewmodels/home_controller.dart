@@ -3,6 +3,7 @@ import '../../../teacher/ui/pages/create_course.dart';
 import '../../../course/ui/pages/course_page.dart';
 import '../../domain/repositories/i_course_repository.dart';
 import '../../../auth/ui/viewmodels/authentication_controller.dart';
+import '../../../teacher/binding/create_courses_binding.dart';
 
 class HomeController extends GetxController {
   final ICourseRepository repository;
@@ -37,7 +38,12 @@ class HomeController extends GetxController {
   }
 
   void abrirCrearCurso() {
-    Get.to(() => const CreateCourseScreen());
+    Get.to(
+      () => const CreateCourseScreen(),
+      binding: CreateCourseBinding(),
+    )?.then((_) {
+      loadCourses(); 
+    });
   }
 
   void abrirCurso(Map<String, dynamic> course) {

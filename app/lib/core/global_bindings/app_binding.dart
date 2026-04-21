@@ -10,6 +10,7 @@ import '../../features/activity/binding/activity_binding.dart';
 import '../../features/evaluation/binding/evaluation_binding.dart';
 import '../../features/evaluation/binding/result_binding.dart';
 import '../../features/general_results/binding/general_results_binding.dart';
+import '../../features/teacher/binding/create_courses_binding.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -25,6 +26,7 @@ class AppBindings extends Bindings {
     ResultsBinding().dependencies();
     TeacherResultsBinding().dependencies();
     GeneralResultsBinding().dependencies();
+    //CreateCourseBinding().dependencies();
     
   }
 }

@@ -14,12 +14,6 @@ import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/domain/repositories/i_auth_repository.dart';
 import 'features/auth/ui/viewmodels/authentication_controller.dart';
 
-import 'features/teacher/ui/viewmodels/create_courses_controller.dart';
-import 'features/teacher/domain/repositories/i_course_create_repository.dart';
-import 'features/teacher/data/repositories/course_create_repository.dart';
-import 'features/teacher/data/datasources/course_create_source_service_roble.dart';
-import 'features/teacher/data/datasources/i_course_create_source.dart';
-
 import 'core/themes/app_theme.dart';
 import './central.dart';
 
@@ -50,10 +44,6 @@ void main() async {
 
   Get.put<IAuthRepository>(AuthRepository(Get.find()));
   Get.put(AuthenticationController(Get.find()));
-
-  Get.lazyPut<ICourseCreateRemoteDataSource>(() => CourseRemoteDataSource());
-  Get.put<ICourseCreateRepository>(CourseCreateRepository(Get.find()));
-  Get.put(CreateController(Get.find()));
 
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es');

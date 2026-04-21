@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import '../../../teacher/domain/models/course_model.dart';
 import '../../domain/repositories/i_course_create_repository.dart';
 import 'dart:math';
+import '../../../home/domain/repositories/i_course_repository.dart';
+import '../../../../core/i_local_preferences.dart';
 
 String generateId() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -12,6 +14,8 @@ String generateId() {
 
 class CreateController extends GetxController {
   final ICourseCreateRepository repository;
+  final homeRepository = Get.find<ICourseRepository>();
+  final prefs = Get.find<ILocalPreferences>();
 
   CreateController(this.repository);
 
@@ -20,15 +24,16 @@ class CreateController extends GetxController {
   Future<void> createCourse(String name, String nrc) async {
     try {
       isLoading.value = true;
-
+      final userId = await prefs.getString("userId");
       final course = Course(
         id: generateId(),
         name: name,
         nrc: nrc,
-        profesorId: "", // no se usa aquí, se toma del token
+        profesorId: userId!, // no se usa aquí, se toma del token
       );
 
       await repository.createCourse(course);
+      await homeRepository.clearCache();
 
       Get.snackbar("Success", "Course created successfully");
     } catch (e) {
