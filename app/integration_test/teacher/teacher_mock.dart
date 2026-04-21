@@ -22,7 +22,22 @@ import 'package:get/get.dart';
 class TeacherMock {
   bool newCourseCreated = false;
 
-  void setupTeacherMocks(MockClient client, MockILocalPreferences prefs) {
+  void setupTeacherMocks(
+    MockClient client,
+    MockILocalPreferences prefs,
+    courseId,
+  ) {
+    Get.delete<CourseController>(force: true);
+    Get.delete<CourseResultsController>(force: true);
+    Get.delete<ImportGroupsController>(force: true);
+
+    final mockGetCategories = MockGetCategories();
+    final mockGetActivities = MockGetActivitiesByCourse();
+    final mockImportGroups = MockImportGroups();
+    final mockImportGroupsToDb = MockImportGroupsToDb();
+    final mockGetCourseAvg = MockGetCourseGlobalAverages();
+    final mockGetGroupsAvg = MockGetGroupsGlobalAverage();
+
     //Mock POST autenticación
     when(
       client.post(any, headers: anyNamed('headers'), body: anyNamed('body')),
@@ -86,9 +101,9 @@ class TeacherMock {
         return http.Response(
           jsonEncode([
             {
-              'id': 'c1',
+              '_id': 'c1',
               'name': 'Criptografía Avanzada',
-              'activities': '2',
+              'nrc': '2222',
               'profesor_id': '1',
             },
           ]),
@@ -98,15 +113,15 @@ class TeacherMock {
         return http.Response(
           jsonEncode([
             {
-              'id': 'c1',
+              '_id': 'c1',
               'name': 'Criptografía Avanzada',
-              'activities': '2',
+              'nrc': '2222',
               'profesor_id': '1',
             },
             {
-              'id': 'c2',
+              '_id': 'c2',
               'name': 'Curso de Robótica',
-              'activities': '0',
+              'nrc': '4321',
               'profesor_id': '1',
             },
           ]),
@@ -153,6 +168,38 @@ class TeacherMock {
       ),
     );
 
+    //GET actividades
+    when(
+      client.get(
+        argThat(
+          predicate<Uri>(
+            (uri) =>
+                uri.path.contains('/read') &&
+                uri.queryParameters['tableName'] == 'activity',
+          ),
+        ),
+        headers: anyNamed('headers'),
+      ),
+    ).thenAnswer((invocation) async {
+      final Uri uri = invocation.positionalArguments[0];
+      final String? courseId = uri.queryParameters['course_id'];
+
+      if (courseId == 'c1') {
+        return http.Response(
+          jsonEncode([
+            {
+              "_id": "act_1",
+              "start_date": "2026-01-01T00:00:00Z", // Fecha en el pasado
+              "end_date": "2026-12-31T23:59:59Z", // Fecha en el futuro
+            },
+          ]),
+          200,
+        );
+      }
+
+      return http.Response(jsonEncode([]), 200);
+    });
+
     //Mocks de SharedPreferences
     when(prefs.getString('userId')).thenAnswer((_) async => '1');
     when(prefs.getString('email')).thenAnswer((_) async => 'test@correo.com');
@@ -160,19 +207,6 @@ class TeacherMock {
     when(prefs.getString('name')).thenAnswer((_) async => 'Test User');
     when(prefs.getString('rol')).thenAnswer((_) async => 'profesor');
     when(prefs.setString(any, any)).thenAnswer((_) async => true);
-  }
-
-  void injectCourseDependencies(String courseId) {
-    Get.delete<CourseController>(force: true);
-    Get.delete<CourseResultsController>(force: true);
-    Get.delete<ImportGroupsController>(force: true);
-
-    final mockGetCategories = MockGetCategories();
-    final mockGetActivities = MockGetActivitiesByCourse();
-    final mockImportGroups = MockImportGroups();
-    final mockImportGroupsToDb = MockImportGroupsToDb();
-    final mockGetCourseAvg = MockGetCourseGlobalAverages();
-    final mockGetGroupsAvg = MockGetGroupsGlobalAverage();
 
     when(mockGetCategories.execute(courseId)).thenAnswer(
       (_) async => <Category>[

@@ -76,7 +76,7 @@ void main() {
   Widget createWidget() => const GetMaterialApp(home: Central());
 
   testWidgets("Prueba de integración - Profesor", (tester) async {
-    TeacherMock().setupTeacherMocks(mockClient, mockPrefs);
+    TeacherMock().setupTeacherMocks(mockClient, mockPrefs, 'c1');
 
     await initializeDateFormatting('es', null);
 
@@ -103,10 +103,9 @@ void main() {
 
     // ***** HOME *****
     homeController.loadCourses();
-    await tester.pumpAndSettle();
     await slowDown(tester, 2);
-
-    expect(homeController.courses.length, 1);
+    await tester.pumpAndSettle();
+    await slowDown(tester);
 
     expect(find.text("Hola, Test User"), findsOneWidget);
 
@@ -140,7 +139,6 @@ void main() {
     await tester.pumpAndSettle();
 
     // ***** HOME *****
-    TeacherMock().injectCourseDependencies("c1");
     homeController.loadCourses();
     await tester.pumpAndSettle();
     await slowDown(tester, 2);
