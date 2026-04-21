@@ -169,12 +169,29 @@ void main() {
     await tester.pumpAndSettle();
     await slowDown(tester, 2);
 
-    await slowDown(tester, 2);
-    await tester.pumpAndSettle();
-
     expect(find.text("Equipo de Desarrollo Alfa"), findsOneWidget);
 
     await tester.tap(find.text("Equipo de Desarrollo Alfa"));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
+    await tester.tap(find.byKey(const Key("backButton")));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
+    await tester.tap(find.byKey(const Key("backButton")));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
+    await tester.tap(find.text("Ver resultados generales"));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
+    await tester.tap(find.text("Grupos"));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
+    await tester.tap(find.text("Proyecto I+D"));
     await tester.pumpAndSettle();
     await slowDown(tester, 2);
   });

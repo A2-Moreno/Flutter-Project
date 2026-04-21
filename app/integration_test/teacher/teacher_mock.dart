@@ -49,6 +49,29 @@ class TeacherMock {
     final mockGetGlobalAvg = MockGetGlobalAverage();
     final mockGetResults = MockGetEvaluationResults();
 
+    final studentAverages = [
+      StudentGlobalAverage(
+        studentId: "u1",
+        studentName: "Carlos Ruiz",
+        average: 4.8,
+      ),
+      StudentGlobalAverage(
+        studentId: "u2",
+        studentName: "Ana García",
+        average: 3.9,
+      ),
+    ];
+
+    final groupAverages = [
+      GroupActivityAverage(
+        activityName: "Proyecto I+D",
+        groups: [
+          GroupAverage(groupId: "g1", groupName: "Equipo Alfa", average: 4.5),
+          GroupAverage(groupId: "g2", groupName: "Equipo Beta", average: 3.8),
+        ],
+      ),
+    ];
+
     final resultadosAna = [
       EvaluationResult(
         evaluatorId: "prof_1",
@@ -292,6 +315,11 @@ class TeacherMock {
       mockGetResults.execute(any, any),
     ).thenAnswer((_) async => resultadosAna);
 
+    when(
+      mockGetCourseAvg.execute(any),
+    ).thenAnswer((_) async => studentAverages);
+    when(mockGetGroupsAvg.execute(any)).thenAnswer((_) async => groupAverages);
+
     Get.put<ImportGroupsController>(
       ImportGroupsController(mockImportGroups, mockImportGroupsToDb),
       permanent: true,
@@ -319,6 +347,11 @@ class TeacherMock {
 
     Get.put<TeacherResultsController>(
       TeacherResultsController(mockGetResults),
+      permanent: true,
+    );
+
+    Get.put<CourseResultsController>(
+      CourseResultsController(mockGetCourseAvg, mockGetGroupsAvg),
       permanent: true,
     );
   }
