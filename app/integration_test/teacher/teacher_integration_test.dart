@@ -161,6 +161,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text("Taller RSA"), findsOneWidget);
 
+    await tester.tap(find.text("Disponibles"));
+    await slowDown(tester, 2);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Proyecto I+D"));
+    await tester.pumpAndSettle();
+    await slowDown(tester, 2);
+
     await slowDown(tester, 2);
     await tester.pumpAndSettle();
   });

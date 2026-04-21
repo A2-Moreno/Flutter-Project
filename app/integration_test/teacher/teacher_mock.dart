@@ -9,6 +9,13 @@ import 'package:app/features/general_results/domain/models/groups_global_average
 import 'package:app/features/general_results/domain/use_cases/get_global_average_usecase.dart';
 import 'package:app/features/general_results/domain/use_cases/get_groups_global_average.dart';
 import 'package:app/features/general_results/ui/viewmodels/general_controller.dart';
+import 'package:app/features/groups/domain/models/group_member_model.dart';
+import 'package:app/features/groups/domain/models/group_model.dart';
+import 'package:app/features/groups/domain/use_cases/get_all_my_groups.dart';
+import 'package:app/features/groups/domain/use_cases/get_evaluations_by_activity_usecase.dart';
+import 'package:app/features/groups/domain/use_cases/get_groups_by_category_usecase.dart';
+import 'package:app/features/groups/domain/use_cases/get_my_group_usecase.dart';
+import 'package:app/features/groups/ui/viewmodels/group_controller.dart';
 import 'package:app/features/import_csv/domain/use_cases/import_groups.dart';
 import 'package:app/features/save_to_db/domain/use_cases/import_groupsdb.dart';
 import 'package:app/features/save_to_db/ui/viewmodels/savedb_controller.dart';
@@ -27,16 +34,40 @@ class TeacherMock {
     MockILocalPreferences prefs,
     courseId,
   ) {
-    Get.delete<CourseController>(force: true);
-    Get.delete<CourseResultsController>(force: true);
-    Get.delete<ImportGroupsController>(force: true);
-
     final mockGetCategories = MockGetCategories();
     final mockGetActivities = MockGetActivitiesByCourse();
     final mockImportGroups = MockImportGroups();
     final mockImportGroupsToDb = MockImportGroupsToDb();
     final mockGetCourseAvg = MockGetCourseGlobalAverages();
     final mockGetGroupsAvg = MockGetGroupsGlobalAverage();
+    final mockGetGroups = MockGetGroupsByCategory();
+    final mockGetMyGroup = MockGetMyGroup();
+    final mockGetAllGroups = MockGetAllMyGroups();
+    final mockGetGlobalAvg = MockGetGlobalAverage();
+
+    final listaDeGrupos = [
+      Group(
+        id: "g1",
+        name: "Equipo de Desarrollo Alfa",
+        code: "ALFA-01",
+        members: [
+          GroupMember(userId: "u1", name: "Ana García", email: "ana@test.com"),
+          GroupMember(userId: "u2", name: "Juan Pérez", email: "juan@test.com"),
+        ],
+      ),
+      Group(
+        id: "g2",
+        name: "Equipo de Diseño Beta",
+        code: "BETA-02",
+        members: [
+          GroupMember(
+            userId: "u3",
+            name: "Carlos Ruiz",
+            email: "carlos@test.com",
+          ),
+        ],
+      ),
+    ];
 
     //Mock POST autenticación
     when(
@@ -237,6 +268,9 @@ class TeacherMock {
       ],
     );
 
+    when(mockGetGroups.execute(any)).thenAnswer((_) async => listaDeGrupos);
+    when(mockGetGlobalAvg.execute(any)).thenAnswer((_) async => 4.8);
+
     Get.put<ImportGroupsController>(
       ImportGroupsController(mockImportGroups, mockImportGroupsToDb),
       permanent: true,
@@ -249,6 +283,16 @@ class TeacherMock {
 
     Get.put<CourseResultsController>(
       CourseResultsController(mockGetCourseAvg, mockGetGroupsAvg),
+      permanent: true,
+    );
+
+    Get.put<GroupController>(
+      GroupController(
+        mockGetGroups,
+        mockGetMyGroup,
+        mockGetAllGroups,
+        mockGetGlobalAvg,
+      ),
       permanent: true,
     );
   }
@@ -293,4 +337,24 @@ class MockGetGroupsGlobalAverage extends Mock
         Invocation.method(#execute, [courseId]),
         returnValue: Future.value(<GroupActivityAverage>[]),
       );
+}
+
+class MockGetGroupsByCategory extends Mock implements GetGroupsByCategory {
+  @override
+  Future<List<Group>> execute(String? activityId) => super.noSuchMethod(
+    Invocation.method(#execute, [activityId]),
+    returnValue: Future.value(<Group>[]),
+  );
+}
+
+class MockGetMyGroup extends Mock implements GetMyGroup {}
+
+class MockGetAllMyGroups extends Mock implements GetAllMyGroups {}
+
+class MockGetGlobalAverage extends Mock implements GetGlobalAverage {
+  @override
+  Future<double> execute(String? activityId) => super.noSuchMethod(
+    Invocation.method(#execute, [activityId]),
+    returnValue: Future.value(0.0),
+  );
 }
