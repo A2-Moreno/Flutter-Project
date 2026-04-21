@@ -29,11 +29,11 @@ class CreateController extends GetxController {
         id: generateId(),
         name: name,
         nrc: nrc,
-        profesorId: userId!, // no se usa aquí, se toma del token
+        profesorId: userId!, 
       );
 
       await repository.createCourse(course);
-      await homeRepository.clearCache();
+      Get.find<ICourseRepository>().clearCache();
 
       Get.snackbar("Success", "Course created successfully");
     } catch (e) {

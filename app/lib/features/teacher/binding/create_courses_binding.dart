@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 class CreateCourseBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ICourseRemoteDataSource>(
+    /*Get.lazyPut<ICourseRemoteDataSource>(
       () => CourseRemoteDataSource(),
       fenix: true,
     );
@@ -24,7 +24,7 @@ class CreateCourseBinding extends Bindings {
     );
     Get.lazyPut<ICourseRepository>(
       () => CourseRepository(Get.find(), Get.find()),
-    );
+    );*/
     Get.lazyPut<ICourseCreateRemoteDataSource>(() => CreateCourseRemoteDataSource());
     Get.lazyPut<ICourseCreateRepository>(
       () => CourseCreateRepository(Get.find()),

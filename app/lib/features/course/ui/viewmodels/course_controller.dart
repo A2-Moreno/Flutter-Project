@@ -37,6 +37,9 @@ class CourseController extends GetxController {
 
       final data = await getActivities.execute(courseId);
       DateTime ahora = DateTime.now();
+      expiredActivities.clear();
+      availableActivities.clear();
+
       for (final activity in data) {
         if (ahora.isAfter(activity.endDate)) {
           expiredActivities.add(activity);

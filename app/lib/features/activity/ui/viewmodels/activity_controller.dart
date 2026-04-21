@@ -3,7 +3,8 @@ import '../../domain/models/activity_model.dart';
 import '../../domain/usecases/create_activity_usecase.dart';
 import '../../domain/usecases/get_activities_by_course_usecase.dart';
 import 'dart:math';
-
+import '../../../home/domain/repositories/i_course_repository.dart';
+import '../../domain/repositories/i_activity_repository.dart';
 
 String generateId() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -13,14 +14,10 @@ String generateId() {
 }
 
 class ActivityController extends GetxController {
-
   final CreateActivity createActivity;
   final GetActivitiesByCourse getActivitiesByCourse;
 
-  ActivityController(
-    this.createActivity,
-    this.getActivitiesByCourse,
-  );
+  ActivityController(this.createActivity, this.getActivitiesByCourse);
 
   final activities = <Activity>[].obs;
   final isLoading = false.obs;
@@ -37,7 +34,6 @@ class ActivityController extends GetxController {
 
       final data = await getActivitiesByCourse.execute(courseId);
       activities.assignAll(data);
-
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {
@@ -67,13 +63,12 @@ class ActivityController extends GetxController {
       );
 
       await createActivity.execute(activity);
-
+      Get.find<ICourseRepository>().clearCache();
       await loadActivities(courseId);
 
       clearForm();
 
       Get.snackbar("Éxito", "Actividad creada correctamente");
-
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {

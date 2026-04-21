@@ -19,6 +19,7 @@ class _GroupsPageState extends State<GroupsPage> {
   void initState() {
     super.initState();
     if (widget.courseId.isNotEmpty) {
+      controller.allMyGroups.clear();
       controller.loadAllMyGroups(widget.courseId);
     } else {
       print("No se recibió courseId");

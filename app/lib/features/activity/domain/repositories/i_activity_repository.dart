@@ -8,4 +8,6 @@ abstract class IActivityRepository {
 
   Future<List<Activity>> getActivitiesByCourse(String courseId);
 
+  Future<void> clearCacheByCourse(String courseId);
+
 }

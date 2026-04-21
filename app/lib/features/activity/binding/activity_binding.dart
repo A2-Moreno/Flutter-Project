@@ -6,6 +6,7 @@ import '../data/repositories/activity_repository_impl.dart';
 import '../domain/usecases/create_activity_usecase.dart';
 import '../domain/usecases/get_activities_by_course_usecase.dart';
 import '../ui/viewmodels/activity_controller.dart';
+import '../data/datasources/activity_cache_data_source.dart';
 
 class ActivityBinding extends Bindings {
   @override
@@ -15,8 +16,13 @@ class ActivityBinding extends Bindings {
       fenix: true,
     );
 
+    Get.lazyPut<LocalActivityCacheSource>(
+      () => LocalActivityCacheSource(Get.find()),
+      fenix: true,
+    );
+
     Get.lazyPut<IActivityRepository>(
-      () => ActivityRepositoryImpl(Get.find()),
+      () => ActivityRepositoryImpl(Get.find(), Get.find()),
       fenix: true,
     );
 
