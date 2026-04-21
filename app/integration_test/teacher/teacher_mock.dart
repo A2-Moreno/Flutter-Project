@@ -70,10 +70,7 @@ class TeacherMock {
       ),
     ).thenAnswer((_) async {
       newCourseCreated = true;
-      return http.Response(
-        jsonEncode({'message': 'Success'}),
-        201,
-      ); // Retorna 201 como espera tu source
+      return http.Response(jsonEncode({'message': 'Success'}), 201);
     });
 
     // Mock GET cursos
@@ -86,7 +83,6 @@ class TeacherMock {
       ),
     ).thenAnswer((_) async {
       if (!newCourseCreated) {
-        // Primera respuesta: Solo 1 curso
         return http.Response(
           jsonEncode([
             {
@@ -99,7 +95,6 @@ class TeacherMock {
           200,
         );
       } else {
-        // Respuesta tras crear: 2 cursos
         return http.Response(
           jsonEncode([
             {
@@ -158,38 +153,6 @@ class TeacherMock {
       ),
     );
 
-    //Mock GET evaluaciones
-    when(
-      client.get(
-        argThat(
-          predicate<Uri>(
-            (uri) => uri.toString().contains('tableName=activities'),
-          ),
-        ),
-        headers: anyNamed('headers'),
-      ),
-    ).thenAnswer(
-      (_) async => http.Response(
-        jsonEncode([
-          {
-            '_id': 'act_1',
-            'name': 'Entrega 1: Propuesta',
-            'endDate': DateTime.now()
-                .add(const Duration(days: 10))
-                .toIso8601String(),
-          },
-          {
-            '_id': 'act_2',
-            'name': 'Examen Parcial',
-            'endDate': DateTime.now()
-                .subtract(const Duration(days: 1))
-                .toIso8601String(),
-          },
-        ]),
-        200,
-      ),
-    );
-
     //Mocks de SharedPreferences
     when(prefs.getString('userId')).thenAnswer((_) async => '1');
     when(prefs.getString('email')).thenAnswer((_) async => 'test@correo.com');
@@ -226,6 +189,15 @@ class TeacherMock {
           categoryId: "cat_1",
           startDate: DateTime.now(),
           endDate: DateTime.now().add(Duration(days: 1)),
+          isPublic: true,
+        ),
+        Activity(
+          id: "act_2",
+          name: "Taller RSA",
+          courseId: courseId,
+          categoryId: "cat_1",
+          startDate: DateTime.now(),
+          endDate: DateTime.now().subtract(Duration(days: 1)),
           isPublic: true,
         ),
       ],

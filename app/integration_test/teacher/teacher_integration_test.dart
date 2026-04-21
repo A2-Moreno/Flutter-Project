@@ -158,6 +158,11 @@ void main() {
 
     expect(find.text("Proyecto I+D"), findsOneWidget);
 
+    await tester.tap(find.text("Finalizadas"));
+    await slowDown(tester, 2);
+    await tester.pumpAndSettle();
+    expect(find.text("Taller RSA"), findsOneWidget);
+
     await slowDown(tester, 2);
     await tester.pumpAndSettle();
   });
