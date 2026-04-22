@@ -5,6 +5,7 @@ import 'package:loggy/loggy.dart';
 
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../../../core/i_local_preferences.dart';
+import '../../../../core/cache/cache_cleaner.dart';
 
 class AuthenticationController extends GetxController {
   final IAuthRepository authentication;
@@ -60,6 +61,7 @@ class AuthenticationController extends GetxController {
     logged.value = false;
     loggedUser = null;
     validating.value = false;
+    localPreferences.clear();
   }
 
   Future<bool> validateToken() async {

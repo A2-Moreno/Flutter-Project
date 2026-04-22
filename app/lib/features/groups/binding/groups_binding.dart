@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../data/datasources/group_source_service_roble.dart';
 import '../data/datasources/i_group_source_service_roble.dart';
 import '../data/repositories/group_repository_impl.dart';
+import '../data/datasources/group_cache_data_source.dart';
+import '../data/datasources/all_my_groups_cache_data_source.dart';
 
 // DOMAIN
 import '../domain/repositories/i_group_repository.dart';
@@ -24,8 +26,18 @@ class GroupDetailBinding extends Bindings {
       fenix: true,
     );
 
+    Get.lazyPut<LocalGroupCacheSource>(
+      () => LocalGroupCacheSource(Get.find()),
+      fenix: true,
+    );
+
+    Get.lazyPut<LocalAllMyGroupsCache>(
+      () => LocalAllMyGroupsCache(Get.find()),
+      fenix: true,
+    );
+
     Get.lazyPut<IGroupDetailRepository>(
-      () => GroupDetailRepositoryImpl(Get.find()),
+      () => GroupDetailRepositoryImpl(Get.find(), Get.find(), Get.find()),
       fenix: true,
     );
 

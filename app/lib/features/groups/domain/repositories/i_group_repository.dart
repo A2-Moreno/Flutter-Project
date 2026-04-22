@@ -11,4 +11,6 @@ abstract class IGroupDetailRepository {
   Future<List<AllMyGroups>> getAllMyGroups(String courseId, String userId);
 
   Future<double> getGlobalAverage(String activityId);
+
+  Future<void> clearAllMyGroupsCache(String courseId, String userId);
 }

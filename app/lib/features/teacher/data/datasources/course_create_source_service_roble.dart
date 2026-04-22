@@ -6,10 +6,10 @@ import '../../../../core/i_local_preferences.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
-class CourseRemoteDataSource implements ICourseCreateRemoteDataSource {
+class CreateCourseRemoteDataSource implements ICourseCreateRemoteDataSource {
   final http.Client httpClient;
 
-  CourseRemoteDataSource({http.Client? client})
+  CreateCourseRemoteDataSource({http.Client? client})
     : httpClient = client ?? http.Client();
 
   final contract = dotenv.get(
