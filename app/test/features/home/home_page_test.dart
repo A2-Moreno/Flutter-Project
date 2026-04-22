@@ -15,6 +15,12 @@ class FakeCourseRepository implements ICourseRepository {
     await Future.delayed(const Duration(milliseconds: 10)); 
     return fakeCourses;
   }
+
+  @override
+  Future<void> clearCache() async {
+    
+  }
+  
 }
 
 class MockAuthController extends GetxController

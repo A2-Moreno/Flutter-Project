@@ -26,6 +26,7 @@ import 'package:app/features/teacher/data/datasources/course_create_source_servi
 
 import 'package:app/features/teacher/data/repositories/course_create_repository.dart';
 import 'package:app/features/teacher/ui/viewmodels/create_courses_controller.dart';
+import 'package:app/features/home/data/datasource/course_cache_data_source.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +55,7 @@ void main() {
 
     final authDataSource = AuthenticationSourceServiceRoble(client: mockClient);
     final authRepository = AuthRepository(authDataSource);
+    final localCache = LocalCourseCacheSource(mockPrefs);
     authController = AuthenticationController(authRepository);
     TestHelper.injectMock<AuthenticationController>(authController);
 
@@ -61,10 +63,13 @@ void main() {
 
     final courseRepo = CourseRepository(
       CourseRemoteDataSource(client: mockClient),
+      localCache,
     );
     homeController = Get.put(HomeController(courseRepo));
 
-    final createSource = create_src.CourseRemoteDataSource(client: mockClient);
+    final createSource = create_src.CreateCourseRemoteDataSource(
+      client: mockClient,
+    );
     final createRepo = CourseCreateRepository(createSource);
     Get.put<CreateController>(CreateController(createRepo));
   });

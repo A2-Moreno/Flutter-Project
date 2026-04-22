@@ -42,7 +42,7 @@ class LocalCourseCacheSource {
         DateTime.now().toIso8601String(),
       );
 
-      logInfo('💾 Course cache saved: ${courses.length}');
+      logInfo('Course cache saved: ${courses.length}');
     } catch (e) {
       logError('Error saving course cache: $e');
     }
@@ -62,7 +62,7 @@ class LocalCourseCacheSource {
           .map((e) => Map<String, dynamic>.from(e))
           .toList();
 
-      logInfo('📦 Course cache loaded: ${courses.length}');
+      logInfo('Course cache loaded: ${courses.length}');
 
       return courses;
     } catch (e) {
@@ -76,7 +76,7 @@ class LocalCourseCacheSource {
       await prefs.remove(_cacheKey);
       await prefs.remove(_cacheTimestampKey);
 
-      logInfo('🗑️ Course cache cleared');
+      logInfo('Course cache cleared');
     } catch (e) {
       logError('Error clearing cache: $e');
     }

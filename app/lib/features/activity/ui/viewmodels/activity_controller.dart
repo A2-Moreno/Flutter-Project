@@ -63,7 +63,9 @@ class ActivityController extends GetxController {
       );
 
       await createActivity.execute(activity);
-      Get.find<ICourseRepository>().clearCache();
+      //Invalidar cache de cursos luego de crear la actividad para que se actualice 
+      //el conteo de actividades en el listado de cursos
+      Get.find<ICourseRepository>().clearCache(); 
       await loadActivities(courseId);
 
       clearForm();
