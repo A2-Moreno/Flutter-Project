@@ -3,11 +3,16 @@ import '../../domain/models/group_model.dart';
 import '../../domain/models/all_groups_model.dart';
 import '../../domain/repositories/i_group_repository.dart';
 import '../datasources/i_group_source_service_roble.dart';
+import '../datasources/group_cache_data_source.dart';
+import 'package:loggy/loggy.dart';
+import '../datasources/all_my_groups_cache_data_source.dart';
 
 class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   final IGroupDetailRemoteDataSource remote;
+  final LocalGroupCacheSource cache;
+  final LocalAllMyGroupsCache allMyGroupsCache;
 
-  GroupDetailRepositoryImpl(this.remote);
+  GroupDetailRepositoryImpl(this.remote, this.cache, this.allMyGroupsCache);
 
   Future<String> _getCategoryIdFromActivity(String activityId) async {
     final activityData = await remote.read(
@@ -28,6 +33,15 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
   @override
   Future<List<Group>> getGroupsByCategory(String activityId) async {
     final categoryId = await _getCategoryIdFromActivity(activityId);
+
+    try {
+      if (await cache.isCacheValid(categoryId)) {
+        logInfo("Grupos desde cache");
+        return await cache.getCachedGroups(categoryId);
+      }
+    } catch (_) {}
+
+    logInfo("Grupos desde API");
 
     final groups = await remote.read(
       table: "groups",
@@ -101,6 +115,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
       );
     }
 
+    await cache.cacheGroups(categoryId, result);
     return result;
   }
 
@@ -178,6 +193,15 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
     String courseId,
     String userId,
   ) async {
+    try {
+      if (await allMyGroupsCache.isValid(courseId, userId)) {
+        print("📦 AllMyGroups desde cache");
+        return await allMyGroupsCache.get(courseId, userId);
+      }
+    } catch (_) {}
+
+    print("AllMyGroups desde API");
+
     final memberships = await remote.read(
       table: "group_members",
       filters: {"estudiante_id": userId},
@@ -224,7 +248,7 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
         ),
       );
     }
-
+    await allMyGroupsCache.save(courseId, userId, result);
     return result;
   }
 
@@ -248,5 +272,10 @@ class GroupDetailRepositoryImpl implements IGroupDetailRepository {
 
     if (allScores.isEmpty) return 0.0;
     return allScores.reduce((a, b) => a + b) / allScores.length;
+  }
+
+  @override
+  Future<void> clearAllMyGroupsCache(String courseId, String userId) async {
+    await allMyGroupsCache.clear(courseId, userId);
   }
 }

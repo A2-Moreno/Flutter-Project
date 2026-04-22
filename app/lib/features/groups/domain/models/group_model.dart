@@ -12,4 +12,24 @@ class Group {
     required this.code,
     required this.members,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "code": code,
+      "members": members.map((m) => m.toJson()).toList(),
+    };
+  }
+
+  factory Group.fromJson(Map<String, dynamic> json) {
+    return Group(
+      id: json["id"],
+      name: json["name"],
+      code: json["code"],
+      members: (json["members"] as List)
+          .map((m) => GroupMember.fromJson(m))
+          .toList(),
+    );
+  }
 }
