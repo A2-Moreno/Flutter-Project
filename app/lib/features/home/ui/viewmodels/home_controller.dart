@@ -42,12 +42,14 @@ class HomeController extends GetxController {
       () => const CreateCourseScreen(),
       binding: CreateCourseBinding(),
     )?.then((_) {
-      loadCourses(); 
+      print("Regresando de crear curso, recargando cursos...");
+      loadCourses();
     });
   }
 
-  void abrirCurso(Map<String, dynamic> course) {
-    Get.to(() => CourseScreen(course: course));
+  void abrirCurso(Map<String, dynamic> course) async {
+    await Get.to(() => CourseScreen(course: course));
+    loadCourses();
   }
 
   void reload() {

@@ -36,11 +36,13 @@ class CourseController extends GetxController {
       isLoading.value = true;
 
       final data = await getActivities.execute(courseId);
+      print("Actividades cargadas: $data");
       DateTime ahora = DateTime.now();
       expiredActivities.clear();
       availableActivities.clear();
 
       for (final activity in data) {
+        print("Actividad: $activity");
         if (ahora.isAfter(activity.endDate)) {
           expiredActivities.add(activity);
         } else {
@@ -48,6 +50,8 @@ class CourseController extends GetxController {
         }
       }
       activities.assignAll(data);
+      print("Actividades expiradas: ${expiredActivities.length}");
+      print("Actividades disponibles: ${availableActivities.length}");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {
@@ -77,6 +81,7 @@ class CourseController extends GetxController {
     );
     if (result == true) {
       await loadActivities(courseId);
+      //await 
     }
   }
 }
