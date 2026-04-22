@@ -63,6 +63,6 @@ Debido a esta problemática han surgido múltiples soluciones que integran el mo
 * Demo de gestión académica: https://youtu.be/IX-7nI-AgBM
 * Demo de evaluación y reportes: https://youtu.be/KKu63El29o8
 * Pruebas de widget: https://youtu.be/1W3xTW6TOK4
-* Pruebas de integración:
+* Pruebas de integración: https://youtu.be/8VBfNt4q8uo
 * Implementación de caché: https://youtu.be/SyaLEo9Ncjg
 * Revisión del código: https://youtu.be/rB1FUkyyJV8
